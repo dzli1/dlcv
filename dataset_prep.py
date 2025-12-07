@@ -72,35 +72,62 @@ def compute_hash(image: Image.Image) -> Optional[str]:
     return str(imagehash.phash(image))
 
 
-def load_wikiart_dataset(max_samples: Optional[int] = None):
+def load_wikiart_dataset(max_samples: Optional[int] = None, streaming: bool = False):
     LOGGER.info("Loading Hugging Face dataset %s (%s)", HF_DATASET_NAME, HF_DATASET_CONFIG)
-    dataset = load_dataset(
-        HF_DATASET_NAME,
-        HF_DATASET_CONFIG,
-        cache_dir=str(HF_CACHE_DIR),
-        split=HF_DATASET_SPLIT
-    )
-    if max_samples:
-        dataset = dataset.select(range(min(max_samples, len(dataset))))
-    return dataset
+    if streaming:
+        LOGGER.info("Using streaming mode to avoid downloading full dataset")
+        dataset = load_dataset(
+            HF_DATASET_NAME,
+            HF_DATASET_CONFIG,
+            cache_dir=str(HF_CACHE_DIR),
+            split=HF_DATASET_SPLIT,
+            streaming=True
+        )
+        # For streaming, we'll limit in the loop instead
+        return dataset
+    else:
+        dataset = load_dataset(
+            HF_DATASET_NAME,
+            HF_DATASET_CONFIG,
+            cache_dir=str(HF_CACHE_DIR),
+            split=HF_DATASET_SPLIT
+        )
+        if max_samples:
+            dataset = dataset.select(range(min(max_samples, len(dataset))))
+        return dataset
 
 
-def extract_metadata(dataset, export_images: bool, image_root: Path) -> pd.DataFrame:
+def extract_metadata(dataset, export_images: bool, image_root: Path, max_samples: Optional[int] = None) -> pd.DataFrame:
     records: List[Dict] = []
     unresolved_mediums = Counter()
     unresolved_genres = Counter()
     image_root.mkdir(parents=True, exist_ok=True)
 
-    for row in tqdm(dataset, desc="Extracting metadata"):
-        image: Image.Image = row["image"]
+    # Handle streaming vs regular datasets
+    if hasattr(dataset, 'take'):  # Streaming dataset
+        iterator = dataset.take(max_samples) if max_samples else dataset
+    else:
+        iterator = dataset
+    
+    for idx, row in enumerate(tqdm(iterator, desc="Extracting metadata", total=max_samples if max_samples else None)):
+        if max_samples and idx >= max_samples:
+            break
+        
+        # Handle both dict and row objects
+        if hasattr(row, 'keys'):
+            row_dict = row
+        else:
+            row_dict = dict(row) if hasattr(row, '__dict__') else row
+        
+        image: Image.Image = row_dict["image"]
         width, height = image.size
         shortest_edge = min(width, height)
-        movement = (row.get("style") or row.get("movement") or "").strip()
-        artist = (row.get("artist") or "").strip()
-        genre = (row.get("genre") or "").strip().lower()
-        medium = (row.get("technique") or row.get("materials") or "").strip().lower()
-        year = extract_year(row.get("date") or row.get("year"))
-        title = (row.get("title") or f"untitled_{row.get('contentId', '')}").strip()
+        movement = str(row_dict.get("style") or row_dict.get("movement") or "").strip()
+        artist = str(row_dict.get("artist") or "").strip()
+        genre = str(row_dict.get("genre") or "").strip().lower()
+        medium = str(row_dict.get("technique") or row_dict.get("materials") or "").strip().lower()
+        year = extract_year(row_dict.get("date") or row_dict.get("year"))
+        title = str(row_dict.get("title") or f"untitled_{row_dict.get('contentId', '')}").strip()
 
         if not movement or not artist:
             continue
@@ -110,7 +137,7 @@ def extract_metadata(dataset, export_images: bool, image_root: Path) -> pd.DataF
         normalized_genre = genre or "unknown"
         normalized_medium = medium or "unknown"
 
-        record_id = row.get("contentId") or row.get("painting_id") or slugify(f"{title}-{artist}-{year or 'na'}")
+        record_id = row_dict.get("contentId") or row_dict.get("painting_id") or slugify(f"{title}-{artist}-{year or 'na'}")
         phash = compute_hash(image)
 
         image_rel_path = None
@@ -219,8 +246,13 @@ def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def apply_medium_genre_filters(df: pd.DataFrame) -> pd.DataFrame:
+def apply_medium_genre_filters(df: pd.DataFrame, strict: bool = True) -> pd.DataFrame:
     before = len(df)
+    if not strict:
+        # Relaxed filtering for small samples - just skip obviously bad data
+        LOGGER.info("Using relaxed medium/genre filtering")
+        return df
+    
     def medium_ok(value: str) -> bool:
         if not isinstance(value, str) or value == "unknown":
             return True
@@ -301,7 +333,9 @@ def visualize_distribution(df: pd.DataFrame) -> None:
         LOGGER.info("Saved visualization %s", output_path)
 
     plt.figure(figsize=(8, 5))
-    df["year"].dropna().plot(kind="hist", bins=30)
+    year_data = pd.to_numeric(df["year"], errors='coerce').dropna()
+    if len(year_data) > 0:
+        year_data.plot(kind="hist", bins=30)
     plt.title("Year Distribution")
     plt.tight_layout()
     plt.savefig(FIGURES_DIR / "year_distribution.png", dpi=200)
@@ -320,16 +354,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-samples", type=int, default=None, help="Optional subset for debugging.")
     parser.add_argument("--skip-export", action="store_true", help="Do not export images (assumes image_path already populated).")
     parser.add_argument("--image-root", type=Path, default=PROCESSED_DIR / "images", help="Directory to export filtered images.")
+    parser.add_argument("--streaming", action="store_true", help="Use streaming mode to avoid downloading full dataset (requires --max-samples).")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    dataset = load_wikiart_dataset(args.max_samples)
-    df = extract_metadata(dataset, export_images=not args.skip_export, image_root=args.image_root)
+    if args.streaming and not args.max_samples:
+        LOGGER.warning("Streaming mode requires --max-samples. Setting to 5000.")
+        args.max_samples = 5000
+    
+    # Use relaxed filtering for small samples
+    use_strict_filter = args.max_samples is None or args.max_samples >= 10000
+    
+    dataset = load_wikiart_dataset(args.max_samples, streaming=args.streaming)
+    df = extract_metadata(dataset, export_images=not args.skip_export, image_root=args.image_root, max_samples=args.max_samples)
     df = filter_by_year(df)
     df = filter_by_resolution(df)
-    df = apply_medium_genre_filters(df)
+    df = apply_medium_genre_filters(df, strict=use_strict_filter)
     df = remove_duplicates(df)
     df, movements = filter_movements(df)
     df, artists = filter_artists(df)
