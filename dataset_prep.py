@@ -360,6 +360,12 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
+    
+    # Auto-enable streaming if max_samples is set (to avoid disk space issues)
+    if args.max_samples and not args.streaming:
+        LOGGER.info("Auto-enabling streaming mode since --max-samples is set (avoids full dataset download)")
+        args.streaming = True
+    
     if args.streaming and not args.max_samples:
         LOGGER.warning("Streaming mode requires --max-samples. Setting to 5000.")
         args.max_samples = 5000
@@ -367,7 +373,15 @@ def main():
     # Use relaxed filtering for small samples
     use_strict_filter = args.max_samples is None or args.max_samples >= 10000
     
-    dataset = load_wikiart_dataset(args.max_samples, streaming=args.streaming)
+    try:
+        dataset = load_wikiart_dataset(args.max_samples, streaming=args.streaming)
+    except OSError as e:
+        if "Not enough disk space" in str(e) and not args.streaming:
+            LOGGER.error("Disk space error! Try using --streaming flag with --max-samples:")
+            LOGGER.error("  python dataset_prep.py --max-samples 2000 --streaming")
+            raise
+        else:
+            raise
     df = extract_metadata(dataset, export_images=not args.skip_export, image_root=args.image_root, max_samples=args.max_samples)
     df = filter_by_year(df)
     df = filter_by_resolution(df)

@@ -72,6 +72,7 @@ ARTIST_LOSS_WEIGHT = 0.5
 
 # Architectures to benchmark
 MODEL_CANDIDATES = [
+    "resnet18",
     "resnet50",
     "convnext_tiny",
     "efficientnet_b3",

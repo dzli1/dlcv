@@ -9,6 +9,14 @@ except ImportError:  # pragma: no cover
     timm = None
 
 
+def _build_resnet18(pretrained: bool) -> Tuple[nn.Module, int]:
+    weights = models.ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
+    backbone = models.resnet18(weights=weights)
+    feature_dim = backbone.fc.in_features
+    backbone.fc = nn.Identity()
+    return backbone, feature_dim
+
+
 def _build_resnet50(pretrained: bool) -> Tuple[nn.Module, int]:
     weights = models.ResNet50_Weights.IMAGENET1K_V2 if pretrained else None
     backbone = models.resnet50(weights=weights)
@@ -26,6 +34,8 @@ def _build_timm_model(arch: str, pretrained: bool) -> Tuple[nn.Module, int]:
 
 
 def build_backbone(arch: str, pretrained: bool = True) -> Tuple[nn.Module, int]:
+    if arch == "resnet18":
+        return _build_resnet18(pretrained)
     if arch == "resnet50":
         return _build_resnet50(pretrained)
     return _build_timm_model(arch, pretrained)
