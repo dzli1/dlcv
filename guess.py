@@ -45,7 +45,12 @@ if __name__ == '__main__':
 
     # 3. Define the image to test (Change this path to test different images!)
     # You can pass the image path as a command line argument, or default to a specific file
-    test_image_path = sys.argv[1] if len(sys.argv) > 1 else './data/val/Baroque/test_example.jpg'
+    test_image_path = sys.argv[1] 
+    if len(sys.argv) > 1:
+        test_image_path = sys.argv[1]
+        
+    else:
+        './data/val/Baroque/test_example.jpg'
 
     if not os.path.exists(test_image_path):
         print(f"Error: Image not found at {test_image_path}")
