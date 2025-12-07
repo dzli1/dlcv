@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from sklearn.metrics import confusion_matrix
-from torch.cuda import amp
+import torch.amp as amp
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
@@ -85,25 +85,34 @@ def run_epoch(
     total_samples = 0
 
     if scaler is None:
-        scaler = amp.GradScaler(enabled=False)
+        scaler = amp.GradScaler('cuda', enabled=False) if DEVICE.type == 'cuda' else None
+
+    device_type = 'cuda' if DEVICE.type == 'cuda' else 'cpu'
+    use_amp = scaler is not None and scaler.is_enabled()
 
     for step, (images, movements, artists, _) in enumerate(dataloader):
         images = images.to(DEVICE, non_blocking=True)
         movements = movements.to(DEVICE)
         artists = artists.to(DEVICE)
 
-        with amp.autocast(enabled=scaler.is_enabled()):
+        with amp.autocast(device_type=device_type, enabled=use_amp):
             outputs = model(images)
             movement_loss = criterion(outputs["movement_logits"], movements)
             artist_loss = criterion(outputs["artist_logits"], artists)
             loss = MOVEMENT_LOSS_WEIGHT * movement_loss + ARTIST_LOSS_WEIGHT * artist_loss
 
         if train:
-            scaler.scale(loss / grad_accum_steps).backward()
-            if (step + 1) % grad_accum_steps == 0:
-                scaler.step(optimizer)
-                scaler.update()
-                optimizer.zero_grad(set_to_none=True)
+            if scaler is not None:
+                scaler.scale(loss / grad_accum_steps).backward()
+                if (step + 1) % grad_accum_steps == 0:
+                    scaler.step(optimizer)
+                    scaler.update()
+                    optimizer.zero_grad(set_to_none=True)
+            else:
+                (loss / grad_accum_steps).backward()
+                if (step + 1) % grad_accum_steps == 0:
+                    optimizer.step()
+                    optimizer.zero_grad(set_to_none=True)
 
         batch_size = images.size(0)
         total_loss += loss.item() * batch_size
@@ -222,7 +231,7 @@ def main():
     criterion = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
     optimizer = create_optimizer(model, lr=args.lr, weight_decay=args.weight_decay)
     scheduler = create_scheduler(optimizer, args.epochs)
-    scaler = amp.GradScaler(enabled=MIXED_PRECISION and DEVICE.type == "cuda")
+    scaler = amp.GradScaler('cuda', enabled=MIXED_PRECISION) if DEVICE.type == "cuda" else None
 
     history = {"train": [], "val": []}
     best_val_acc = -1.0
@@ -277,8 +286,9 @@ def main():
     artist_cm = confusion_matrix(artist_targets, artist_preds)
     movement_map = dataset_info["movement_map"]
     artist_map = dataset_info["artist_map"]
-    plot_confusion(movement_cm, movement_map, CHECKPOINT_DIR / f"{args.arch}_movement_cm.png", "Movement Confusion")
-    plot_confusion(artist_cm, artist_map, CHECKPOINT_DIR / f"{args.arch}_artist_cm.png", "Artist Confusion")
+    from config import CONFUSION_DIR
+    plot_confusion(movement_cm, movement_map, CONFUSION_DIR / f"{args.arch}_movement_cm.png", "Movement Confusion")
+    plot_confusion(artist_cm, artist_map, CONFUSION_DIR / f"{args.arch}_artist_cm.png", "Artist Confusion")
 
     export_embeddings(model, dataloaders["test"], CHECKPOINT_DIR / f"{args.arch}_test_embeddings.npz")
 
