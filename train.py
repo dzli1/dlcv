@@ -1,90 +1,297 @@
+import argparse
+import json
+from pathlib import Path
+from typing import Dict, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
-import torch.optim as optim
-import copy
-from tqdm import tqdm
-import json
+from sklearn.metrics import confusion_matrix
+from torch.cuda import amp
+from torch.optim import AdamW
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
-# Import from local modules
-from config import *
+from config import (
+    ARTIST_LOSS_WEIGHT,
+    BASE_LR,
+    BATCH_SIZE,
+    CHECKPOINT_DIR,
+    DEVICE,
+    EPOCHS,
+    GRAD_ACCUMULATION_STEPS,
+    HISTORY_FILE,
+    IMAGE_SIZE_CNN,
+    LABEL_SMOOTHING,
+    MIXED_PRECISION,
+    MODEL_CANDIDATES,
+    MOVEMENT_LOSS_WEIGHT,
+    VAL_BATCH_SIZE,
+    WEIGHT_DECAY,
+)
 from data_loader import get_dataloaders
-from model import setup_model
+from model import MultiTaskClassifier
 
-# Load Data
-dataloaders, image_datasets, NUM_CLASSES, class_names = get_dataloaders()
 
-def train_model(model, dataloaders, criterion, optimizer, num_epochs, checkpoint_path, image_datasets):
-    best_model_wts = copy.deepcopy(model.state_dict()); best_acc = 0.0
-    history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Train multi-task WikiArt classifier.")
+    parser.add_argument("--arch", type=str, default="convnext_tiny", choices=MODEL_CANDIDATES)
+    parser.add_argument("--epochs", type=int, default=EPOCHS)
+    parser.add_argument("--batch-size", type=int, default=BATCH_SIZE)
+    parser.add_argument("--val-batch-size", type=int, default=VAL_BATCH_SIZE)
+    parser.add_argument("--image-size", type=int, default=IMAGE_SIZE_CNN)
+    parser.add_argument("--lr", type=float, default=BASE_LR)
+    parser.add_argument("--weight-decay", type=float, default=WEIGHT_DECAY)
+    parser.add_argument("--dropout", type=float, default=0.3)
+    parser.add_argument("--label-smoothing", type=float, default=LABEL_SMOOTHING)
+    parser.add_argument("--grad-accum", type=int, default=GRAD_ACCUMULATION_STEPS)
+    parser.add_argument("--no-pretrained", action="store_true", help="Disable pretrained initialization.")
+    parser.add_argument("--checkpoint-name", type=str, default=None)
+    return parser.parse_args()
 
-    for epoch in range(num_epochs):
-        print(f'\nEpoch {epoch+1}/{num_epochs}')
-        
-        for phase in ['train', 'val']:
-            model.train() if phase == 'train' else model.eval()
-            running_loss = 0.0; running_corrects = 0
-            
-            for inputs, labels in tqdm(dataloaders[phase], desc=f"{phase.capitalize()}ing"):
-                inputs = inputs.to(DEVICE); labels = labels.to(DEVICE)
-                optimizer.zero_grad()
-                
-                with torch.set_grad_enabled(phase == 'train'):
-                    outputs = model(inputs)
-                    _, preds = torch.max(outputs, 1)
-                    loss = criterion(outputs, labels)
-                    if phase == 'train':
-                        loss.backward(); optimizer.step()
-                        
-                running_loss += loss.item() * inputs.size(0)
-                running_corrects += torch.sum(preds == labels.data)
-            
-            epoch_loss = running_loss / len(image_datasets[phase])
-            epoch_acc = running_corrects.double() / len(image_datasets[phase])
-            print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
-            history[f'{phase}_loss'].append(epoch_loss)
-            history[f'{phase}_acc'].append(epoch_acc.item())
+def create_optimizer(model: torch.nn.Module, lr: float, weight_decay: float):
+    return AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
-            if phase == 'val' and epoch_acc > best_acc:
-                best_acc = epoch_acc
-                best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(model.state_dict(), checkpoint_path)
-                print(f"Model saved! New best validation accuracy: {best_acc:.4f}")
-                    
-    model.load_state_dict(best_model_wts)
-    return model, history
 
-if __name__ == '__main__':
-    # --- Phase 1: Base Training ---
-    print("\n" + "="*40 + "\nSTARTING PHASE 1: BASE TRAINING\n" + "="*40)
-    
-    model = setup_model(NUM_CLASSES, DEVICE, freeze_base=True)
-    criterion = nn.CrossEntropyLoss()
-    optimizer_base = optim.Adam(model.fc.parameters(), lr=BASE_LR)
+def create_scheduler(optimizer, epochs: int):
+    return CosineAnnealingLR(optimizer, T_max=epochs)
 
-    # Function call parameters on one line
-    final_model, history_base = train_model(model, dataloaders, criterion, optimizer_base, NUM_EPOCHS_BASE, CHECKPOINT_PATH_BASE, image_datasets)
-    print(f"Base training complete. Model saved to: {CHECKPOINT_PATH_BASE}")
 
-    # --- Phase 2: Fine-Tuning ---
-    print("\n" + "="*40 + "\nSTARTING PHASE 2: FINE-TUNING\n" + "="*40)
-    
-    final_model = setup_model(NUM_CLASSES, DEVICE, freeze_base=False)
-    final_model.load_state_dict(torch.load(CHECKPOINT_PATH_BASE))
-    optimizer_tune = optim.Adam(final_model.parameters(), lr=FINE_TUNE_LR)
+def accuracy(logits: torch.Tensor, targets: torch.Tensor) -> float:
+    preds = logits.argmax(dim=1)
+    return (preds == targets).float().mean().item()
 
-    # Function call parameters on one line
-    final_model_tuned, history_fine_tune = train_model(final_model, dataloaders, criterion, optimizer_tune, NUM_EPOCHS_TUNE, CHECKPOINT_PATH_TUNE, image_datasets)
-    print(f"Fine-tuning complete. Model saved to: {CHECKPOINT_PATH_TUNE}")
 
-    # --- Save History ---
-    full_history = {
-        'base_train_loss': history_base['train_loss'], 'base_val_loss': history_base['val_loss'],
-        'base_train_acc': history_base['train_acc'], 'base_val_acc': history_base['val_acc'],
-        'tune_train_loss': history_fine_tune['train_loss'], 'tune_val_loss': history_fine_tune['val_loss'],
-        'tune_train_acc': history_fine_tune['train_acc'], 'tune_val_acc': history_fine_tune['val_acc']
+def run_epoch(
+    model: MultiTaskClassifier,
+    dataloader: torch.utils.data.DataLoader,
+    criterion: nn.Module,
+    optimizer=None,
+    scaler: amp.GradScaler = None,
+    train: bool = True,
+    grad_accum_steps: int = 1,
+):
+    if train:
+        model.train()
+    else:
+        model.eval()
+
+    if train:
+        optimizer.zero_grad(set_to_none=True)
+
+    total_loss = 0.0
+    movement_acc = 0.0
+    artist_acc = 0.0
+    total_samples = 0
+
+    if scaler is None:
+        scaler = amp.GradScaler(enabled=False)
+
+    for step, (images, movements, artists, _) in enumerate(dataloader):
+        images = images.to(DEVICE, non_blocking=True)
+        movements = movements.to(DEVICE)
+        artists = artists.to(DEVICE)
+
+        with amp.autocast(enabled=scaler.is_enabled()):
+            outputs = model(images)
+            movement_loss = criterion(outputs["movement_logits"], movements)
+            artist_loss = criterion(outputs["artist_logits"], artists)
+            loss = MOVEMENT_LOSS_WEIGHT * movement_loss + ARTIST_LOSS_WEIGHT * artist_loss
+
+        if train:
+            scaler.scale(loss / grad_accum_steps).backward()
+            if (step + 1) % grad_accum_steps == 0:
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
+
+        batch_size = images.size(0)
+        total_loss += loss.item() * batch_size
+        movement_acc += accuracy(outputs["movement_logits"], movements) * batch_size
+        artist_acc += accuracy(outputs["artist_logits"], artists) * batch_size
+        total_samples += batch_size
+
+    return {
+        "loss": total_loss / total_samples,
+        "movement_acc": movement_acc / total_samples,
+        "artist_acc": artist_acc / total_samples,
     }
 
-    with open(HISTORY_FILE, 'w') as f:
-        json.dump(full_history, f, indent=4)
-    print(f"\nTraining history saved to {HISTORY_FILE}")
+
+def collect_predictions(model, dataloader):
+    model.eval()
+    all_movements = []
+    all_movement_targets = []
+    all_artists = []
+    all_artist_targets = []
+
+    with torch.no_grad():
+        for images, movement_targets, artist_targets, _ in dataloader:
+            images = images.to(DEVICE, non_blocking=True)
+            outputs = model(images)
+            all_movements.append(outputs["movement_logits"].cpu())
+            all_artists.append(outputs["artist_logits"].cpu())
+            all_movement_targets.append(movement_targets)
+            all_artist_targets.append(artist_targets)
+
+    movement_logits = torch.cat(all_movements)
+    artist_logits = torch.cat(all_artists)
+    movement_preds = movement_logits.argmax(dim=1).numpy()
+    artist_preds = artist_logits.argmax(dim=1).numpy()
+    movement_targets = torch.cat(all_movement_targets).numpy()
+    artist_targets = torch.cat(all_artist_targets).numpy()
+    return (movement_preds, movement_targets), (artist_preds, artist_targets)
+
+
+def plot_confusion(cm: np.ndarray, class_names: Dict[int, str], output_path: Path, title: str):
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 8))
+    plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, [class_names[i] for i in tick_marks], rotation=90)
+    plt.yticks(tick_marks, [class_names[i] for i in tick_marks])
+    thresh = cm.max() / 2.0
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(
+                j,
+                i,
+                format(cm[i, j], "d"),
+                horizontalalignment="center",
+                color="white" if cm[i, j] > thresh else "black",
+                fontsize=6,
+            )
+    plt.tight_layout()
+    plt.ylabel("True label")
+    plt.xlabel("Predicted label")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=200)
+    plt.close()
+
+
+def export_embeddings(model, dataloader, output_path: Path):
+    model.eval()
+    features = []
+    movement_targets = []
+    artist_targets = []
+    record_ids = []
+    with torch.no_grad():
+        for images, movements, artists, record_id in dataloader:
+            images = images.to(DEVICE, non_blocking=True)
+            outputs = model(images)
+            features.append(outputs["features"].cpu().numpy())
+            movement_targets.append(movements.numpy())
+            artist_targets.append(artists.numpy())
+            record_ids.extend(record_id)
+    np.savez(
+        output_path,
+        features=np.concatenate(features),
+        movement_targets=np.concatenate(movement_targets),
+        artist_targets=np.concatenate(artist_targets),
+        record_ids=np.array(record_ids),
+    )
+
+
+def save_history(entry: Dict):
+    history = []
+    if HISTORY_FILE.exists():
+        with open(HISTORY_FILE) as f:
+            history = json.load(f)
+    history.append(entry)
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f, indent=2)
+
+
+def main():
+    args = parse_args()
+    dataloaders, datasets, dataset_info = get_dataloaders(
+        image_size=args.image_size,
+        batch_size=args.batch_size,
+        val_batch_size=args.val_batch_size,
+    )
+    model = MultiTaskClassifier(
+        arch=args.arch,
+        num_movements=dataset_info["num_movements"],
+        num_artists=dataset_info["num_artists"],
+        dropout=args.dropout,
+        pretrained=not args.no_pretrained,
+    ).to(DEVICE)
+
+    criterion = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
+    optimizer = create_optimizer(model, lr=args.lr, weight_decay=args.weight_decay)
+    scheduler = create_scheduler(optimizer, args.epochs)
+    scaler = amp.GradScaler(enabled=MIXED_PRECISION and DEVICE.type == "cuda")
+
+    history = {"train": [], "val": []}
+    best_val_acc = -1.0
+    best_state = None
+
+    for epoch in range(args.epochs):
+        train_metrics = run_epoch(
+            model,
+            dataloaders["train"],
+            criterion,
+            optimizer,
+            scaler,
+            train=True,
+            grad_accum_steps=args.grad_accum,
+        )
+        val_metrics = run_epoch(model, dataloaders["val"], criterion, optimizer=None, train=False)
+        scheduler.step()
+
+        history["train"].append(train_metrics)
+        history["val"].append(val_metrics)
+
+        val_score = 0.5 * (val_metrics["movement_acc"] + val_metrics["artist_acc"])
+        if val_score > best_val_acc:
+            best_val_acc = val_score
+            best_state = model.state_dict()
+
+        print(
+            f"Epoch {epoch+1}/{args.epochs} | "
+            f"Train Loss {train_metrics['loss']:.4f} | "
+            f"Val Loss {val_metrics['loss']:.4f} | "
+            f"Val Movement Acc {val_metrics['movement_acc']:.3f} | "
+            f"Val Artist Acc {val_metrics['artist_acc']:.3f}"
+        )
+
+    checkpoint_name = args.checkpoint_name or f"{args.arch}_best.pt"
+    checkpoint_path = CHECKPOINT_DIR / checkpoint_name
+    torch.save({"model_state": best_state, "config": vars(args)}, checkpoint_path)
+    print(f"Saved best model to {checkpoint_path}")
+    model.load_state_dict(best_state)
+
+    test_metrics = run_epoch(model, dataloaders["test"], criterion, train=False)
+    print(
+        f"Test Loss {test_metrics['loss']:.4f} | "
+        f"Test Movement Acc {test_metrics['movement_acc']:.3f} | "
+        f"Test Artist Acc {test_metrics['artist_acc']:.3f}"
+    )
+
+    (movement_preds, movement_targets), (artist_preds, artist_targets) = collect_predictions(
+        model, dataloaders["test"]
+    )
+    movement_cm = confusion_matrix(movement_targets, movement_preds)
+    artist_cm = confusion_matrix(artist_targets, artist_preds)
+    movement_map = dataset_info["movement_map"]
+    artist_map = dataset_info["artist_map"]
+    plot_confusion(movement_cm, movement_map, CHECKPOINT_DIR / f"{args.arch}_movement_cm.png", "Movement Confusion")
+    plot_confusion(artist_cm, artist_map, CHECKPOINT_DIR / f"{args.arch}_artist_cm.png", "Artist Confusion")
+
+    export_embeddings(model, dataloaders["test"], CHECKPOINT_DIR / f"{args.arch}_test_embeddings.npz")
+
+    history_entry = {
+        "arch": args.arch,
+        "epochs": args.epochs,
+        "train_history": history["train"],
+        "val_history": history["val"],
+        "test_metrics": test_metrics,
+        "checkpoint": str(checkpoint_path),
+    }
+    save_history(history_entry)
+
+
+if __name__ == "__main__":
+    main()
