@@ -1,0 +1,1286 @@
+{
+  "resnet_multitask": {
+    "style_metrics": {
+      "accuracy": 0.7851671309192201,
+      "f1_macro": 0.7973200590171049,
+      "f1_weighted": 0.7848399896086093,
+      "classification_report": {
+        "Art Nouveau (Modern)": {
+          "precision": 0.8025751072961373,
+          "recall": 0.7824267782426778,
+          "f1-score": 0.7923728813559322,
+          "support": 239.0
+        },
+        "Baroque": {
+          "precision": 0.9367088607594937,
+          "recall": 0.8409090909090909,
+          "f1-score": 0.8862275449101796,
+          "support": 88.0
+        },
+        "Expressionism": {
+          "precision": 0.7674418604651163,
+          "recall": 0.7268722466960352,
+          "f1-score": 0.746606334841629,
+          "support": 227.0
+        },
+        "Impressionism": {
+          "precision": 0.7814465408805031,
+          "recall": 0.8524871355060034,
+          "f1-score": 0.815422477440525,
+          "support": 583.0
+        },
+        "Na\u00efve Art (Primitivism)": {
+          "precision": 0.6973684210526315,
+          "recall": 0.6883116883116883,
+          "f1-score": 0.6928104575163399,
+          "support": 77.0
+        },
+        "Northern Renaissance": {
+          "precision": 0.96875,
+          "recall": 0.8493150684931506,
+          "f1-score": 0.9051094890510949,
+          "support": 73.0
+        },
+        "Post-Impressionism": {
+          "precision": 0.767175572519084,
+          "recall": 0.67,
+          "f1-score": 0.7153024911032029,
+          "support": 300.0
+        },
+        "Realism": {
+          "precision": 0.7322834645669292,
+          "recall": 0.7802013422818792,
+          "f1-score": 0.7554833468724614,
+          "support": 596.0
+        },
+        "Rococo": {
+          "precision": 0.9473684210526315,
+          "recall": 0.8181818181818182,
+          "f1-score": 0.8780487804878049,
+          "support": 22.0
+        },
+        "Romanticism": {
+          "precision": 0.8141592920353983,
+          "recall": 0.8544891640866873,
+          "f1-score": 0.8338368580060423,
+          "support": 323.0
+        },
+        "Surrealism": {
+          "precision": 0.8806818181818182,
+          "recall": 0.7908163265306123,
+          "f1-score": 0.8333333333333334,
+          "support": 196.0
+        },
+        "Symbolism": {
+          "precision": 0.7391304347826086,
+          "recall": 0.6891891891891891,
+          "f1-score": 0.7132867132867133,
+          "support": 148.0
+        },
+        "accuracy": 0.7851671309192201,
+        "macro avg": {
+          "precision": 0.819590816132696,
+          "recall": 0.7785999873690694,
+          "f1-score": 0.7973200590171049,
+          "support": 2872.0
+        },
+        "weighted avg": {
+          "precision": 0.787210549585741,
+          "recall": 0.7851671309192201,
+          "f1-score": 0.7848399896086093,
+          "support": 2872.0
+        }
+      }
+    },
+    "artist_metrics": {
+      "accuracy": 0.7388579387186629,
+      "f1_macro": 0.7148087429815594,
+      "f1_weighted": 0.7404480758412993,
+      "classification_report": {
+        "Albert Bierstadt": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 3.0
+        },
+        "Albrecht Durer": {
+          "precision": 0.8809523809523809,
+          "recall": 0.7872340425531915,
+          "f1-score": 0.8314606741573034,
+          "support": 47.0
+        },
+        "Aleksey Savrasov": {
+          "precision": 0.6071428571428571,
+          "recall": 0.7083333333333334,
+          "f1-score": 0.6538461538461539,
+          "support": 24.0
+        },
+        "Alfred Sisley": {
+          "precision": 0.7543859649122807,
+          "recall": 0.8958333333333334,
+          "f1-score": 0.819047619047619,
+          "support": 48.0
+        },
+        "Amedeo Modigliani": {
+          "precision": 0.8857142857142857,
+          "recall": 0.8611111111111112,
+          "f1-score": 0.8732394366197183,
+          "support": 36.0
+        },
+        "Aubrey Beardsley": {
+          "precision": 0.8846153846153846,
+          "recall": 0.7666666666666667,
+          "f1-score": 0.8214285714285714,
+          "support": 30.0
+        },
+        "Berthe Morisot": {
+          "precision": 0.6818181818181818,
+          "recall": 0.625,
+          "f1-score": 0.6521739130434783,
+          "support": 24.0
+        },
+        "Boris Kustodiev": {
+          "precision": 0.6181818181818182,
+          "recall": 0.5862068965517241,
+          "f1-score": 0.6017699115044248,
+          "support": 58.0
+        },
+        "Camille Corot": {
+          "precision": 0.7090909090909091,
+          "recall": 0.7647058823529411,
+          "f1-score": 0.7358490566037735,
+          "support": 51.0
+        },
+        "Camille Pissarro": {
+          "precision": 0.8536585365853658,
+          "recall": 0.7777777777777778,
+          "f1-score": 0.813953488372093,
+          "support": 45.0
+        },
+        "Charles M. Russell": {
+          "precision": 0.9130434782608695,
+          "recall": 0.875,
+          "f1-score": 0.8936170212765957,
+          "support": 24.0
+        },
+        "Charles Turner": {
+          "precision": 0.9642857142857143,
+          "recall": 0.9310344827586207,
+          "f1-score": 0.9473684210526315,
+          "support": 29.0
+        },
+        "Childe Hassam": {
+          "precision": 0.65,
+          "recall": 0.7959183673469388,
+          "f1-score": 0.7155963302752294,
+          "support": 49.0
+        },
+        "Claude Monet": {
+          "precision": 0.717391304347826,
+          "recall": 0.717391304347826,
+          "f1-score": 0.717391304347826,
+          "support": 46.0
+        },
+        "David Burliuk": {
+          "precision": 0.7575757575757576,
+          "recall": 0.6944444444444444,
+          "f1-score": 0.7246376811594203,
+          "support": 36.0
+        },
+        "Edgar Degas": {
+          "precision": 0.6721311475409836,
+          "recall": 0.7592592592592593,
+          "f1-score": 0.7130434782608696,
+          "support": 54.0
+        },
+        "Edouard Cortes": {
+          "precision": 0.9523809523809523,
+          "recall": 0.9523809523809523,
+          "f1-score": 0.9523809523809523,
+          "support": 21.0
+        },
+        "Edouard Manet": {
+          "precision": 0.4,
+          "recall": 0.4,
+          "f1-score": 0.4,
+          "support": 25.0
+        },
+        "Egon Schiele": {
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1-score": 0.8,
+          "support": 25.0
+        },
+        "Ernst Ludwig Kirchner": {
+          "precision": 0.8636363636363636,
+          "recall": 0.8444444444444444,
+          "f1-score": 0.8539325842696629,
+          "support": 45.0
+        },
+        "Eugene Boudin": {
+          "precision": 0.8958333333333334,
+          "recall": 0.9347826086956522,
+          "f1-score": 0.9148936170212766,
+          "support": 46.0
+        },
+        "Eugene Delacroix": {
+          "precision": 0.35714285714285715,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.3448275862068966,
+          "support": 15.0
+        },
+        "Felix Vallotton ": {
+          "precision": 0.6333333333333333,
+          "recall": 0.7037037037037037,
+          "f1-score": 0.6666666666666666,
+          "support": 27.0
+        },
+        "Ferdinand Hodler": {
+          "precision": 0.6060606060606061,
+          "recall": 0.7692307692307693,
+          "f1-score": 0.6779661016949152,
+          "support": 26.0
+        },
+        "Fernand Leger": {
+          "precision": 0.7777777777777778,
+          "recall": 0.7777777777777778,
+          "f1-score": 0.7777777777777778,
+          "support": 9.0
+        },
+        "Francisco Goya": {
+          "precision": 0.7272727272727273,
+          "recall": 0.8205128205128205,
+          "f1-score": 0.7710843373493976,
+          "support": 39.0
+        },
+        "George Romney": {
+          "precision": 0.8260869565217391,
+          "recall": 0.8636363636363636,
+          "f1-score": 0.8444444444444444,
+          "support": 22.0
+        },
+        "George Stefanescu-Ramnic ": {
+          "precision": 0.7142857142857143,
+          "recall": 0.5882352941176471,
+          "f1-score": 0.6451612903225806,
+          "support": 17.0
+        },
+        "Georges Braque": {
+          "precision": 0.4444444444444444,
+          "recall": 0.4444444444444444,
+          "f1-score": 0.4444444444444444,
+          "support": 9.0
+        },
+        "Giovanni Boldini": {
+          "precision": 0.6190476190476191,
+          "recall": 0.5909090909090909,
+          "f1-score": 0.6046511627906976,
+          "support": 22.0
+        },
+        "Gustave Courbet": {
+          "precision": 0.75,
+          "recall": 0.5526315789473685,
+          "f1-score": 0.6363636363636364,
+          "support": 38.0
+        },
+        "Gustave Dore": {
+          "precision": 0.98,
+          "recall": 0.9423076923076923,
+          "f1-score": 0.9607843137254902,
+          "support": 52.0
+        },
+        "Gustave Loiseau": {
+          "precision": 0.8235294117647058,
+          "recall": 0.7,
+          "f1-score": 0.7567567567567568,
+          "support": 20.0
+        },
+        "Henri Fantin-Latour": {
+          "precision": 0.84,
+          "recall": 0.8076923076923077,
+          "f1-score": 0.8235294117647058,
+          "support": 26.0
+        },
+        "Henri Martin": {
+          "precision": 0.6666666666666666,
+          "recall": 0.6153846153846154,
+          "f1-score": 0.64,
+          "support": 13.0
+        },
+        "Henri Matisse": {
+          "precision": 0.7714285714285715,
+          "recall": 0.7297297297297297,
+          "f1-score": 0.75,
+          "support": 37.0
+        },
+        "Henri de Toulouse-Lautrec": {
+          "precision": 0.7575757575757576,
+          "recall": 0.7352941176470589,
+          "f1-score": 0.746268656716418,
+          "support": 34.0
+        },
+        "Ilya Repin": {
+          "precision": 0.5128205128205128,
+          "recall": 0.45454545454545453,
+          "f1-score": 0.4819277108433735,
+          "support": 44.0
+        },
+        "Isaac Levitan": {
+          "precision": 0.7142857142857143,
+          "recall": 0.6122448979591837,
+          "f1-score": 0.6593406593406593,
+          "support": 49.0
+        },
+        "Ivan Aivazovsky": {
+          "precision": 0.8928571428571429,
+          "recall": 0.9259259259259259,
+          "f1-score": 0.9090909090909091,
+          "support": 54.0
+        },
+        "Ivan Bilibin": {
+          "precision": 0.6086956521739131,
+          "recall": 0.8235294117647058,
+          "f1-score": 0.7,
+          "support": 17.0
+        },
+        "Ivan Shishkin": {
+          "precision": 0.7592592592592593,
+          "recall": 0.803921568627451,
+          "f1-score": 0.780952380952381,
+          "support": 51.0
+        },
+        "James Tissot": {
+          "precision": 0.8108108108108109,
+          "recall": 0.7894736842105263,
+          "f1-score": 0.8,
+          "support": 38.0
+        },
+        "Jan Matejko": {
+          "precision": 0.9375,
+          "recall": 0.5769230769230769,
+          "f1-score": 0.7142857142857143,
+          "support": 26.0
+        },
+        "John Henry Twachtman": {
+          "precision": 0.9090909090909091,
+          "recall": 0.7407407407407407,
+          "f1-score": 0.8163265306122449,
+          "support": 27.0
+        },
+        "John Singer Sargent": {
+          "precision": 0.6428571428571429,
+          "recall": 0.6,
+          "f1-score": 0.6206896551724138,
+          "support": 45.0
+        },
+        "Konstantin Korovin": {
+          "precision": 0.34375,
+          "recall": 0.4074074074074074,
+          "f1-score": 0.3728813559322034,
+          "support": 27.0
+        },
+        "Konstantin Makovsky": {
+          "precision": 0.5862068965517241,
+          "recall": 0.6071428571428571,
+          "f1-score": 0.5964912280701754,
+          "support": 28.0
+        },
+        "Konstantin Somov": {
+          "precision": 0.5625,
+          "recall": 0.42857142857142855,
+          "f1-score": 0.4864864864864865,
+          "support": 21.0
+        },
+        "Konstantin Yuon": {
+          "precision": 0.35294117647058826,
+          "recall": 0.7058823529411765,
+          "f1-score": 0.47058823529411764,
+          "support": 17.0
+        },
+        "Kuzma Petrov-Vodkin": {
+          "precision": 0.8095238095238095,
+          "recall": 0.7391304347826086,
+          "f1-score": 0.7727272727272727,
+          "support": 23.0
+        },
+        "Louis Comfort Tiffany": {
+          "precision": 0.8823529411764706,
+          "recall": 0.6521739130434783,
+          "f1-score": 0.75,
+          "support": 23.0
+        },
+        "Lucas Cranach the Elder": {
+          "precision": 0.88,
+          "recall": 0.8461538461538461,
+          "f1-score": 0.8627450980392157,
+          "support": 26.0
+        },
+        "Lucian Freud": {
+          "precision": 0.8181818181818182,
+          "recall": 0.782608695652174,
+          "f1-score": 0.8,
+          "support": 23.0
+        },
+        "M.C. Escher": {
+          "precision": 0.7272727272727273,
+          "recall": 0.7272727272727273,
+          "f1-score": 0.7272727272727273,
+          "support": 22.0
+        },
+        "Marc Chagall": {
+          "precision": 0.8301886792452831,
+          "recall": 0.8301886792452831,
+          "f1-score": 0.8301886792452831,
+          "support": 53.0
+        },
+        "Martiros Saryan": {
+          "precision": 0.8163265306122449,
+          "recall": 0.8163265306122449,
+          "f1-score": 0.8163265306122449,
+          "support": 49.0
+        },
+        "Mary Cassatt": {
+          "precision": 0.76,
+          "recall": 0.6551724137931034,
+          "f1-score": 0.7037037037037037,
+          "support": 29.0
+        },
+        "Maurice Prendergast": {
+          "precision": 0.9354838709677419,
+          "recall": 0.8787878787878788,
+          "f1-score": 0.90625,
+          "support": 33.0
+        },
+        "Max Ernst": {
+          "precision": 0.8709677419354839,
+          "recall": 0.75,
+          "f1-score": 0.8059701492537313,
+          "support": 36.0
+        },
+        "Nicholas Roerich": {
+          "precision": 0.7719298245614035,
+          "recall": 0.8301886792452831,
+          "f1-score": 0.8,
+          "support": 53.0
+        },
+        "Niko Pirosmani": {
+          "precision": 0.8421052631578947,
+          "recall": 0.8888888888888888,
+          "f1-score": 0.8648648648648649,
+          "support": 18.0
+        },
+        "Odilon Redon": {
+          "precision": 0.8125,
+          "recall": 0.8125,
+          "f1-score": 0.8125,
+          "support": 48.0
+        },
+        "Orest Kiprensky": {
+          "precision": 0.6785714285714286,
+          "recall": 0.76,
+          "f1-score": 0.7169811320754716,
+          "support": 25.0
+        },
+        "Pablo Picasso": {
+          "precision": 0.48148148148148145,
+          "recall": 0.37142857142857144,
+          "f1-score": 0.41935483870967744,
+          "support": 35.0
+        },
+        "Paul Cezanne": {
+          "precision": 0.7142857142857143,
+          "recall": 0.8571428571428571,
+          "f1-score": 0.7792207792207793,
+          "support": 35.0
+        },
+        "Paul Gauguin": {
+          "precision": 0.675,
+          "recall": 0.7105263157894737,
+          "f1-score": 0.6923076923076923,
+          "support": 38.0
+        },
+        "Peter Paul Rubens": {
+          "precision": 0.918918918918919,
+          "recall": 0.8292682926829268,
+          "f1-score": 0.8717948717948718,
+          "support": 41.0
+        },
+        "Pierre Bonnard": {
+          "precision": 0.7777777777777778,
+          "recall": 0.6363636363636364,
+          "f1-score": 0.7,
+          "support": 11.0
+        },
+        "Pierre-Auguste Renoir": {
+          "precision": 0.828125,
+          "recall": 0.8412698412698413,
+          "f1-score": 0.8346456692913385,
+          "support": 63.0
+        },
+        "Pyotr Konchalovsky": {
+          "precision": 0.8214285714285714,
+          "recall": 0.6216216216216216,
+          "f1-score": 0.7076923076923077,
+          "support": 37.0
+        },
+        "Raphael Kirchner": {
+          "precision": 0.9130434782608695,
+          "recall": 0.84,
+          "f1-score": 0.875,
+          "support": 50.0
+        },
+        "Rembrandt": {
+          "precision": 0.8181818181818182,
+          "recall": 0.7659574468085106,
+          "f1-score": 0.7912087912087912,
+          "support": 47.0
+        },
+        "Rene Magritte": {
+          "precision": 0.7272727272727273,
+          "recall": 0.7272727272727273,
+          "f1-score": 0.7272727272727273,
+          "support": 33.0
+        },
+        "Salvador Dali": {
+          "precision": 0.5777777777777777,
+          "recall": 0.65,
+          "f1-score": 0.611764705882353,
+          "support": 40.0
+        },
+        "Samuel Peploe": {
+          "precision": 0.8620689655172413,
+          "recall": 0.9615384615384616,
+          "f1-score": 0.9090909090909091,
+          "support": 26.0
+        },
+        "Theodor Severin Kittelsen": {
+          "precision": 0.3333333333333333,
+          "recall": 0.75,
+          "f1-score": 0.46153846153846156,
+          "support": 8.0
+        },
+        "Theophile Steinlen": {
+          "precision": 0.8181818181818182,
+          "recall": 0.6585365853658537,
+          "f1-score": 0.7297297297297297,
+          "support": 41.0
+        },
+        "Thomas Eakins": {
+          "precision": 0.5625,
+          "recall": 0.6206896551724138,
+          "f1-score": 0.5901639344262295,
+          "support": 29.0
+        },
+        "Valentin Serov": {
+          "precision": 0.36363636363636365,
+          "recall": 0.38095238095238093,
+          "f1-score": 0.37209302325581395,
+          "support": 21.0
+        },
+        "Vasily Polenov": {
+          "precision": 0.36363636363636365,
+          "recall": 0.4444444444444444,
+          "f1-score": 0.4,
+          "support": 27.0
+        },
+        "Vasily Surikov": {
+          "precision": 0.5416666666666666,
+          "recall": 0.7647058823529411,
+          "f1-score": 0.6341463414634146,
+          "support": 17.0
+        },
+        "Vincent van Gogh": {
+          "precision": 0.7843137254901961,
+          "recall": 0.7017543859649122,
+          "f1-score": 0.7407407407407407,
+          "support": 57.0
+        },
+        "William Merritt Chase": {
+          "precision": 0.475,
+          "recall": 0.5588235294117647,
+          "f1-score": 0.5135135135135135,
+          "support": 34.0
+        },
+        "William Turner": {
+          "precision": 0.7692307692307693,
+          "recall": 0.9090909090909091,
+          "f1-score": 0.8333333333333334,
+          "support": 22.0
+        },
+        "William-Adolphe Bouguereau": {
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1-score": 0.8888888888888888,
+          "support": 4.0
+        },
+        "Zdislav Beksinski": {
+          "precision": 0.9574468085106383,
+          "recall": 0.9,
+          "f1-score": 0.9278350515463918,
+          "support": 50.0
+        },
+        "Zinaida Serebriakova": {
+          "precision": 0.75,
+          "recall": 0.8275862068965517,
+          "f1-score": 0.7868852459016393,
+          "support": 29.0
+        },
+        "accuracy": 0.7388579387186629,
+        "macro avg": {
+          "precision": 0.7211338493826234,
+          "recall": 0.7184889067334226,
+          "f1-score": 0.7148087429815594,
+          "support": 2872.0
+        },
+        "weighted avg": {
+          "precision": 0.7491894092389197,
+          "recall": 0.7388579387186629,
+          "f1-score": 0.7404480758412993,
+          "support": 2872.0
+        }
+      }
+    }
+  },
+  "vit_multitask": {
+    "style_metrics": {
+      "accuracy": 0.7698467966573816,
+      "f1_macro": 0.784015870298966,
+      "f1_weighted": 0.7698233939115678,
+      "classification_report": {
+        "Art Nouveau (Modern)": {
+          "precision": 0.7733333333333333,
+          "recall": 0.7280334728033473,
+          "f1-score": 0.75,
+          "support": 239.0
+        },
+        "Baroque": {
+          "precision": 0.8902439024390244,
+          "recall": 0.8295454545454546,
+          "f1-score": 0.8588235294117647,
+          "support": 88.0
+        },
+        "Expressionism": {
+          "precision": 0.8333333333333334,
+          "recall": 0.7268722466960352,
+          "f1-score": 0.7764705882352941,
+          "support": 227.0
+        },
+        "Impressionism": {
+          "precision": 0.7592592592592593,
+          "recall": 0.8439108061749572,
+          "f1-score": 0.7993501218521527,
+          "support": 583.0
+        },
+        "Na\u00efve Art (Primitivism)": {
+          "precision": 0.6756756756756757,
+          "recall": 0.6493506493506493,
+          "f1-score": 0.6622516556291391,
+          "support": 77.0
+        },
+        "Northern Renaissance": {
+          "precision": 0.8918918918918919,
+          "recall": 0.9041095890410958,
+          "f1-score": 0.8979591836734694,
+          "support": 73.0
+        },
+        "Post-Impressionism": {
+          "precision": 0.7191780821917808,
+          "recall": 0.7,
+          "f1-score": 0.7094594594594594,
+          "support": 300.0
+        },
+        "Realism": {
+          "precision": 0.7170111287758346,
+          "recall": 0.7567114093959731,
+          "f1-score": 0.7363265306122448,
+          "support": 596.0
+        },
+        "Rococo": {
+          "precision": 0.9047619047619048,
+          "recall": 0.8636363636363636,
+          "f1-score": 0.8837209302325582,
+          "support": 22.0
+        },
+        "Romanticism": {
+          "precision": 0.8344155844155844,
+          "recall": 0.7956656346749226,
+          "f1-score": 0.8145800316957211,
+          "support": 323.0
+        },
+        "Surrealism": {
+          "precision": 0.8409090909090909,
+          "recall": 0.7551020408163265,
+          "f1-score": 0.7956989247311828,
+          "support": 196.0
+        },
+        "Symbolism": {
+          "precision": 0.7310344827586207,
+          "recall": 0.7162162162162162,
+          "f1-score": 0.7235494880546075,
+          "support": 148.0
+        },
+        "accuracy": 0.7698467966573816,
+        "macro avg": {
+          "precision": 0.7975873058121112,
+          "recall": 0.7724294902792784,
+          "f1-score": 0.784015870298966,
+          "support": 2872.0
+        },
+        "weighted avg": {
+          "precision": 0.7721596164264052,
+          "recall": 0.7698467966573816,
+          "f1-score": 0.7698233939115678,
+          "support": 2872.0
+        }
+      }
+    },
+    "artist_metrics": {
+      "accuracy": 0.7287604456824512,
+      "f1_macro": 0.7080921696726766,
+      "f1_weighted": 0.7298619778189132,
+      "classification_report": {
+        "Albert Bierstadt": {
+          "precision": 0.25,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.2857142857142857,
+          "support": 3.0
+        },
+        "Albrecht Durer": {
+          "precision": 0.7692307692307693,
+          "recall": 0.851063829787234,
+          "f1-score": 0.8080808080808081,
+          "support": 47.0
+        },
+        "Aleksey Savrasov": {
+          "precision": 0.7,
+          "recall": 0.5833333333333334,
+          "f1-score": 0.6363636363636364,
+          "support": 24.0
+        },
+        "Alfred Sisley": {
+          "precision": 0.7454545454545455,
+          "recall": 0.8541666666666666,
+          "f1-score": 0.7961165048543689,
+          "support": 48.0
+        },
+        "Amedeo Modigliani": {
+          "precision": 0.9411764705882353,
+          "recall": 0.8888888888888888,
+          "f1-score": 0.9142857142857143,
+          "support": 36.0
+        },
+        "Aubrey Beardsley": {
+          "precision": 0.8620689655172413,
+          "recall": 0.8333333333333334,
+          "f1-score": 0.847457627118644,
+          "support": 30.0
+        },
+        "Berthe Morisot": {
+          "precision": 0.5769230769230769,
+          "recall": 0.625,
+          "f1-score": 0.6,
+          "support": 24.0
+        },
+        "Boris Kustodiev": {
+          "precision": 0.64,
+          "recall": 0.5517241379310345,
+          "f1-score": 0.5925925925925926,
+          "support": 58.0
+        },
+        "Camille Corot": {
+          "precision": 0.7843137254901961,
+          "recall": 0.7843137254901961,
+          "f1-score": 0.7843137254901961,
+          "support": 51.0
+        },
+        "Camille Pissarro": {
+          "precision": 0.6,
+          "recall": 0.8,
+          "f1-score": 0.6857142857142857,
+          "support": 45.0
+        },
+        "Charles M. Russell": {
+          "precision": 0.9130434782608695,
+          "recall": 0.875,
+          "f1-score": 0.8936170212765957,
+          "support": 24.0
+        },
+        "Charles Turner": {
+          "precision": 1.0,
+          "recall": 0.9655172413793104,
+          "f1-score": 0.9824561403508771,
+          "support": 29.0
+        },
+        "Childe Hassam": {
+          "precision": 0.7045454545454546,
+          "recall": 0.6326530612244898,
+          "f1-score": 0.6666666666666666,
+          "support": 49.0
+        },
+        "Claude Monet": {
+          "precision": 0.6981132075471698,
+          "recall": 0.8043478260869565,
+          "f1-score": 0.7474747474747475,
+          "support": 46.0
+        },
+        "David Burliuk": {
+          "precision": 0.8,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.7272727272727273,
+          "support": 36.0
+        },
+        "Edgar Degas": {
+          "precision": 0.7636363636363637,
+          "recall": 0.7777777777777778,
+          "f1-score": 0.7706422018348624,
+          "support": 54.0
+        },
+        "Edouard Cortes": {
+          "precision": 1.0,
+          "recall": 0.9523809523809523,
+          "f1-score": 0.975609756097561,
+          "support": 21.0
+        },
+        "Edouard Manet": {
+          "precision": 0.36,
+          "recall": 0.36,
+          "f1-score": 0.36,
+          "support": 25.0
+        },
+        "Egon Schiele": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1-score": 0.8888888888888888,
+          "support": 25.0
+        },
+        "Ernst Ludwig Kirchner": {
+          "precision": 0.868421052631579,
+          "recall": 0.7333333333333333,
+          "f1-score": 0.7951807228915663,
+          "support": 45.0
+        },
+        "Eugene Boudin": {
+          "precision": 0.875,
+          "recall": 0.9130434782608695,
+          "f1-score": 0.8936170212765957,
+          "support": 46.0
+        },
+        "Eugene Delacroix": {
+          "precision": 0.4117647058823529,
+          "recall": 0.4666666666666667,
+          "f1-score": 0.4375,
+          "support": 15.0
+        },
+        "Felix Vallotton ": {
+          "precision": 0.5833333333333334,
+          "recall": 0.5185185185185185,
+          "f1-score": 0.5490196078431373,
+          "support": 27.0
+        },
+        "Ferdinand Hodler": {
+          "precision": 0.8095238095238095,
+          "recall": 0.6538461538461539,
+          "f1-score": 0.723404255319149,
+          "support": 26.0
+        },
+        "Fernand Leger": {
+          "precision": 0.875,
+          "recall": 0.7777777777777778,
+          "f1-score": 0.8235294117647058,
+          "support": 9.0
+        },
+        "Francisco Goya": {
+          "precision": 0.8235294117647058,
+          "recall": 0.717948717948718,
+          "f1-score": 0.7671232876712328,
+          "support": 39.0
+        },
+        "George Romney": {
+          "precision": 0.84,
+          "recall": 0.9545454545454546,
+          "f1-score": 0.8936170212765957,
+          "support": 22.0
+        },
+        "George Stefanescu-Ramnic ": {
+          "precision": 0.75,
+          "recall": 0.5294117647058824,
+          "f1-score": 0.6206896551724138,
+          "support": 17.0
+        },
+        "Georges Braque": {
+          "precision": 0.6666666666666666,
+          "recall": 0.4444444444444444,
+          "f1-score": 0.5333333333333333,
+          "support": 9.0
+        },
+        "Giovanni Boldini": {
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1-score": 0.6363636363636364,
+          "support": 22.0
+        },
+        "Gustave Courbet": {
+          "precision": 0.5333333333333333,
+          "recall": 0.42105263157894735,
+          "f1-score": 0.47058823529411764,
+          "support": 38.0
+        },
+        "Gustave Dore": {
+          "precision": 0.9607843137254902,
+          "recall": 0.9423076923076923,
+          "f1-score": 0.9514563106796117,
+          "support": 52.0
+        },
+        "Gustave Loiseau": {
+          "precision": 0.8666666666666667,
+          "recall": 0.65,
+          "f1-score": 0.7428571428571429,
+          "support": 20.0
+        },
+        "Henri Fantin-Latour": {
+          "precision": 0.8148148148148148,
+          "recall": 0.8461538461538461,
+          "f1-score": 0.8301886792452831,
+          "support": 26.0
+        },
+        "Henri Martin": {
+          "precision": 0.8,
+          "recall": 0.3076923076923077,
+          "f1-score": 0.4444444444444444,
+          "support": 13.0
+        },
+        "Henri Matisse": {
+          "precision": 0.8181818181818182,
+          "recall": 0.7297297297297297,
+          "f1-score": 0.7714285714285715,
+          "support": 37.0
+        },
+        "Henri de Toulouse-Lautrec": {
+          "precision": 0.5405405405405406,
+          "recall": 0.5882352941176471,
+          "f1-score": 0.5633802816901409,
+          "support": 34.0
+        },
+        "Ilya Repin": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1-score": 0.5,
+          "support": 44.0
+        },
+        "Isaac Levitan": {
+          "precision": 0.6326530612244898,
+          "recall": 0.6326530612244898,
+          "f1-score": 0.6326530612244898,
+          "support": 49.0
+        },
+        "Ivan Aivazovsky": {
+          "precision": 0.9411764705882353,
+          "recall": 0.8888888888888888,
+          "f1-score": 0.9142857142857143,
+          "support": 54.0
+        },
+        "Ivan Bilibin": {
+          "precision": 0.6190476190476191,
+          "recall": 0.7647058823529411,
+          "f1-score": 0.6842105263157895,
+          "support": 17.0
+        },
+        "Ivan Shishkin": {
+          "precision": 0.7727272727272727,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.7157894736842105,
+          "support": 51.0
+        },
+        "James Tissot": {
+          "precision": 0.8055555555555556,
+          "recall": 0.7631578947368421,
+          "f1-score": 0.7837837837837838,
+          "support": 38.0
+        },
+        "Jan Matejko": {
+          "precision": 0.8235294117647058,
+          "recall": 0.5384615384615384,
+          "f1-score": 0.6511627906976745,
+          "support": 26.0
+        },
+        "John Henry Twachtman": {
+          "precision": 0.782608695652174,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.72,
+          "support": 27.0
+        },
+        "John Singer Sargent": {
+          "precision": 0.6511627906976745,
+          "recall": 0.6222222222222222,
+          "f1-score": 0.6363636363636364,
+          "support": 45.0
+        },
+        "Konstantin Korovin": {
+          "precision": 0.5757575757575758,
+          "recall": 0.7037037037037037,
+          "f1-score": 0.6333333333333333,
+          "support": 27.0
+        },
+        "Konstantin Makovsky": {
+          "precision": 0.5135135135135135,
+          "recall": 0.6785714285714286,
+          "f1-score": 0.5846153846153846,
+          "support": 28.0
+        },
+        "Konstantin Somov": {
+          "precision": 0.4482758620689655,
+          "recall": 0.6190476190476191,
+          "f1-score": 0.52,
+          "support": 21.0
+        },
+        "Konstantin Yuon": {
+          "precision": 0.5263157894736842,
+          "recall": 0.5882352941176471,
+          "f1-score": 0.5555555555555556,
+          "support": 17.0
+        },
+        "Kuzma Petrov-Vodkin": {
+          "precision": 0.6363636363636364,
+          "recall": 0.6086956521739131,
+          "f1-score": 0.6222222222222222,
+          "support": 23.0
+        },
+        "Louis Comfort Tiffany": {
+          "precision": 0.9,
+          "recall": 0.782608695652174,
+          "f1-score": 0.8372093023255814,
+          "support": 23.0
+        },
+        "Lucas Cranach the Elder": {
+          "precision": 0.9166666666666666,
+          "recall": 0.8461538461538461,
+          "f1-score": 0.88,
+          "support": 26.0
+        },
+        "Lucian Freud": {
+          "precision": 0.8260869565217391,
+          "recall": 0.8260869565217391,
+          "f1-score": 0.8260869565217391,
+          "support": 23.0
+        },
+        "M.C. Escher": {
+          "precision": 0.7391304347826086,
+          "recall": 0.7727272727272727,
+          "f1-score": 0.7555555555555555,
+          "support": 22.0
+        },
+        "Marc Chagall": {
+          "precision": 0.8541666666666666,
+          "recall": 0.7735849056603774,
+          "f1-score": 0.8118811881188119,
+          "support": 53.0
+        },
+        "Martiros Saryan": {
+          "precision": 0.7547169811320755,
+          "recall": 0.8163265306122449,
+          "f1-score": 0.7843137254901961,
+          "support": 49.0
+        },
+        "Mary Cassatt": {
+          "precision": 0.7391304347826086,
+          "recall": 0.5862068965517241,
+          "f1-score": 0.6538461538461539,
+          "support": 29.0
+        },
+        "Maurice Prendergast": {
+          "precision": 0.8378378378378378,
+          "recall": 0.9393939393939394,
+          "f1-score": 0.8857142857142857,
+          "support": 33.0
+        },
+        "Max Ernst": {
+          "precision": 0.8928571428571429,
+          "recall": 0.6944444444444444,
+          "f1-score": 0.78125,
+          "support": 36.0
+        },
+        "Nicholas Roerich": {
+          "precision": 0.8775510204081632,
+          "recall": 0.8113207547169812,
+          "f1-score": 0.8431372549019608,
+          "support": 53.0
+        },
+        "Niko Pirosmani": {
+          "precision": 0.7727272727272727,
+          "recall": 0.9444444444444444,
+          "f1-score": 0.85,
+          "support": 18.0
+        },
+        "Odilon Redon": {
+          "precision": 0.7454545454545455,
+          "recall": 0.8541666666666666,
+          "f1-score": 0.7961165048543689,
+          "support": 48.0
+        },
+        "Orest Kiprensky": {
+          "precision": 0.7368421052631579,
+          "recall": 0.56,
+          "f1-score": 0.6363636363636364,
+          "support": 25.0
+        },
+        "Pablo Picasso": {
+          "precision": 0.34,
+          "recall": 0.4857142857142857,
+          "f1-score": 0.4,
+          "support": 35.0
+        },
+        "Paul Cezanne": {
+          "precision": 0.58,
+          "recall": 0.8285714285714286,
+          "f1-score": 0.6823529411764706,
+          "support": 35.0
+        },
+        "Paul Gauguin": {
+          "precision": 0.7222222222222222,
+          "recall": 0.6842105263157895,
+          "f1-score": 0.7027027027027027,
+          "support": 38.0
+        },
+        "Peter Paul Rubens": {
+          "precision": 0.8260869565217391,
+          "recall": 0.926829268292683,
+          "f1-score": 0.8735632183908046,
+          "support": 41.0
+        },
+        "Pierre Bonnard": {
+          "precision": 0.4117647058823529,
+          "recall": 0.6363636363636364,
+          "f1-score": 0.5,
+          "support": 11.0
+        },
+        "Pierre-Auguste Renoir": {
+          "precision": 0.7575757575757576,
+          "recall": 0.7936507936507936,
+          "f1-score": 0.7751937984496124,
+          "support": 63.0
+        },
+        "Pyotr Konchalovsky": {
+          "precision": 0.7435897435897436,
+          "recall": 0.7837837837837838,
+          "f1-score": 0.7631578947368421,
+          "support": 37.0
+        },
+        "Raphael Kirchner": {
+          "precision": 0.8431372549019608,
+          "recall": 0.86,
+          "f1-score": 0.8514851485148515,
+          "support": 50.0
+        },
+        "Rembrandt": {
+          "precision": 0.8666666666666667,
+          "recall": 0.8297872340425532,
+          "f1-score": 0.8478260869565217,
+          "support": 47.0
+        },
+        "Rene Magritte": {
+          "precision": 0.7,
+          "recall": 0.6363636363636364,
+          "f1-score": 0.6666666666666666,
+          "support": 33.0
+        },
+        "Salvador Dali": {
+          "precision": 0.6190476190476191,
+          "recall": 0.65,
+          "f1-score": 0.6341463414634146,
+          "support": 40.0
+        },
+        "Samuel Peploe": {
+          "precision": 0.9230769230769231,
+          "recall": 0.9230769230769231,
+          "f1-score": 0.9230769230769231,
+          "support": 26.0
+        },
+        "Theodor Severin Kittelsen": {
+          "precision": 0.42857142857142855,
+          "recall": 0.75,
+          "f1-score": 0.5454545454545454,
+          "support": 8.0
+        },
+        "Theophile Steinlen": {
+          "precision": 0.6842105263157895,
+          "recall": 0.6341463414634146,
+          "f1-score": 0.6582278481012658,
+          "support": 41.0
+        },
+        "Thomas Eakins": {
+          "precision": 0.6333333333333333,
+          "recall": 0.6551724137931034,
+          "f1-score": 0.6440677966101694,
+          "support": 29.0
+        },
+        "Valentin Serov": {
+          "precision": 0.23809523809523808,
+          "recall": 0.23809523809523808,
+          "f1-score": 0.23809523809523808,
+          "support": 21.0
+        },
+        "Vasily Polenov": {
+          "precision": 0.38461538461538464,
+          "recall": 0.37037037037037035,
+          "f1-score": 0.37735849056603776,
+          "support": 27.0
+        },
+        "Vasily Surikov": {
+          "precision": 0.5,
+          "recall": 0.5882352941176471,
+          "f1-score": 0.5405405405405406,
+          "support": 17.0
+        },
+        "Vincent van Gogh": {
+          "precision": 0.7213114754098361,
+          "recall": 0.7719298245614035,
+          "f1-score": 0.7457627118644068,
+          "support": 57.0
+        },
+        "William Merritt Chase": {
+          "precision": 0.6111111111111112,
+          "recall": 0.6470588235294118,
+          "f1-score": 0.6285714285714286,
+          "support": 34.0
+        },
+        "William Turner": {
+          "precision": 0.8095238095238095,
+          "recall": 0.7727272727272727,
+          "f1-score": 0.7906976744186046,
+          "support": 22.0
+        },
+        "William-Adolphe Bouguereau": {
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1-score": 0.8888888888888888,
+          "support": 4.0
+        },
+        "Zdislav Beksinski": {
+          "precision": 0.9574468085106383,
+          "recall": 0.9,
+          "f1-score": 0.9278350515463918,
+          "support": 50.0
+        },
+        "Zinaida Serebriakova": {
+          "precision": 0.7741935483870968,
+          "recall": 0.8275862068965517,
+          "f1-score": 0.8,
+          "support": 29.0
+        },
+        "accuracy": 0.7287604456824512,
+        "macro avg": {
+          "precision": 0.7190893862899649,
+          "recall": 0.7092430385952517,
+          "f1-score": 0.7080921696726766,
+          "support": 2872.0
+        },
+        "weighted avg": {
+          "precision": 0.739250173202778,
+          "recall": 0.7287604456824512,
+          "f1-score": 0.7298619778189132,
+          "support": 2872.0
+        }
+      }
+    }
+  }
+}
