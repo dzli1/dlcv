@@ -261,13 +261,13 @@ class Trainer:
             # Learning rate scheduling
             scheduler.step(val_loss)
 
-            # Early stopping check
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
-                patience_counter = 0
-            else:
-                patience_counter += 1
-                print(f"Early stopping counter: {patience_counter}/{patience}")
+            # Early stopping check (commented out)
+            # if val_loss < best_val_loss:
+            #     best_val_loss = val_loss
+            #     patience_counter = 0
+            # else:
+            #     patience_counter += 1
+            #     print(f"Early stopping counter: {patience_counter}/{patience}")
 
             # Save best model
             if val_acc > self.best_val_acc:
@@ -279,11 +279,11 @@ class Trainer:
             # Save latest checkpoint
             self.save_checkpoint('latest_model.pth', epoch, optimizer)
 
-            # Early stopping
-            if patience_counter >= patience:
-                print(f"\nEarly stopping triggered after {epoch + 1} epochs")
-                print(f"Best Val Accuracy: {self.best_val_acc:.2f}%")
-                break
+            # Early stopping (commented out)
+            # if patience_counter >= patience:
+            #     print(f"\nEarly stopping triggered after {epoch + 1} epochs")
+            #     print(f"Best Val Accuracy: {self.best_val_acc:.2f}%")
+            #     break
 
         # Save training history
         self.save_history()
