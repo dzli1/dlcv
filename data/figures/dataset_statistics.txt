@@ -1,0 +1,68 @@
+======================================================================
+WIKIART DATASET STATISTICS REPORT
+======================================================================
+
+Total Images: 28636
+Number of Styles: 12
+Number of Artists: 88
+
+SPLIT STATISTICS
+----------------------------------------------------------------------
+
+TRAIN SET:
+  Total images: 22905
+  Percentage: 79.99%
+  Unique styles: 12
+  Unique artists: 88
+
+VAL SET:
+  Total images: 2859
+  Percentage: 9.98%
+  Unique styles: 12
+  Unique artists: 88
+
+TEST SET:
+  Total images: 2872
+  Percentage: 10.03%
+  Unique styles: 12
+  Unique artists: 88
+
+======================================================================
+STYLE STATISTICS (Training Set)
+----------------------------------------------------------------------
+  Realism                       :  4759 images (20.78%)
+  Impressionism                 :  4656 images (20.33%)
+  Romanticism                   :  2574 images (11.24%)
+  Post-Impressionism            :  2395 images (10.46%)
+  Art Nouveau (Modern)          :  1912 images (8.35%)
+  Expressionism                 :  1811 images (7.91%)
+  Surrealism                    :  1563 images (6.82%)
+  Symbolism                     :  1179 images (5.15%)
+  Baroque                       :   699 images (3.05%)
+  Naïve Art (Primitivism)       :   608 images (2.65%)
+  Northern Renaissance          :   579 images (2.53%)
+  Rococo                        :   170 images (0.74%)
+
+======================================================================
+TOP 20 ARTISTS (Training Set)
+----------------------------------------------------------------------
+   1. Eugene Boudin                      :   412 images
+   2. John Singer Sargent                :   404 images
+   3. Zdislav Beksinski                  :   404 images
+   4. Albrecht Durer                     :   403 images
+   5. Claude Monet                       :   401 images
+   6. Childe Hassam                      :   400 images
+   7. Rembrandt                          :   400 images
+   8. Ivan Shishkin                      :   400 images
+   9. Gustave Dore                       :   397 images
+  10. Pierre-Auguste Renoir              :   397 images
+  11. Nicholas Roerich                   :   395 images
+  12. Ilya Repin                         :   393 images
+  13. Boris Kustodiev                    :   393 images
+  14. Ivan Aivazovsky                    :   389 images
+  15. Raphael Kirchner                   :   388 images
+  16. Edgar Degas                        :   386 images
+  17. Camille Corot                      :   382 images
+  18. Martiros Saryan                    :   376 images
+  19. Theophile Steinlen                 :   373 images
+  20. Salvador Dali                      :   373 images

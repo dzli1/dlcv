@@ -1,0 +1,16 @@
+{
+  "total_images": 28636,
+  "num_styles": 12,
+  "num_artists": 88,
+  "splits": {
+    "train": 22905,
+    "val": 2859,
+    "test": 2872
+  },
+  "split_ratios": {
+    "train": 0.8,
+    "val": 0.1,
+    "test": 0.1
+  },
+  "random_seed": 42
+}

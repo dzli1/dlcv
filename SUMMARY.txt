@@ -1,0 +1,50 @@
+DEEP LEARNING ART CLASSIFICATION PROJECT
+==========================================
+
+WHAT IT DOES:
+- Classifies art by STYLE and ARTIST using deep learning
+- Downloads WikiArt dataset from Hugging Face
+- Trains 2 multi-task models: ResNet50 + ViT
+- Each model predicts both style AND artist simultaneously
+
+MODELS TRAINED:
+1. ResNet Multi-task  (style + artist classification)
+2. ViT Multi-task     (style + artist classification)
+
+WHY 2 MODELS?
+- Multi-task learning is more efficient than separate models
+- ResNet and ViT use different architectures (CNN vs Transformer)
+- Comparing both shows which works better for art classification
+
+HOW TO RUN:
+See RUN_STEPS.txt or run: ./run_full_pipeline.sh
+
+TIME REQUIRED (Single GPU):
+- Download data:    30-60 min
+- Prepare splits:   5-10 min
+- Visualize:        2-5 min
+- Train 2 models:   2-5 hours (with GPU)
+- Evaluate:         20-40 min
+---------------------------------
+TOTAL:              ~4-8 hours
+
+WITH 2 GPUs (Parallel Training):
+- Use: python train_parallel.py
+- Training time cut in HALF: 1-2.5 hours
+- TOTAL: ~3-5 hours
+
+WHAT YOU GET:
+- Trained models saved in checkpoints/
+- Accuracy metrics in reports/comparison_summary.txt
+- Confusion matrices for each model
+- t-SNE embedding visualizations
+- Training curves showing learning progress
+
+RESULTS LOCATION:
+cat reports/comparison_summary.txt  # View model accuracies
+
+MAIN BOTTLENECK:
+Training the models (2-5 hours with GPU)
+- 20 epochs per model
+- Each epoch processes entire dataset
+- GPU is essential (CPU would take days)
