@@ -15,6 +15,7 @@ import seaborn as sns
 
 from models import (
     ResNetStyleClassifier, ResNetArtistClassifier, ResNetMultiTaskClassifier,
+    ResNetGramStyleClassifier,
     ViTStyleClassifier, ViTArtistClassifier, ViTMultiTaskClassifier
 )
 from utils import get_dataloaders
@@ -303,9 +304,14 @@ def main():
         num_workers=args.num_workers
     )
 
-    # Define models to evaluate (only multi-task models)
+    # Define models to evaluate
     models_to_eval = [
+        (ResNetStyleClassifier(num_styles), 'resnet_style', 'style'),
+        (ResNetArtistClassifier(num_artists), 'resnet_artist', 'artist'),
         (ResNetMultiTaskClassifier(num_styles, num_artists), 'resnet_multitask', 'multitask'),
+        (ResNetGramStyleClassifier(num_styles), 'resnet_gram_style', 'style'),
+        (ViTStyleClassifier(num_styles), 'vit_style', 'style'),
+        (ViTArtistClassifier(num_artists), 'vit_artist', 'artist'),
         (ViTMultiTaskClassifier(num_styles, num_artists), 'vit_multitask', 'multitask'),
     ]
 

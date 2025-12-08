@@ -222,3 +222,218 @@ supports both local development and cloud deployment with minimal configuration.
 ================================================================================
                               END OF DOCUMENT
 ================================================================================
+
+
+
+================================================================================
+              GRAM-MATRIX BASED STYLE-AWARE CLASSIFIER
+================================================================================
+
+NEW MODEL: ResNetGramStyleClassifier (7th model)
+
+MOTIVATION
+----------
+Traditional CNNs learn style implicitly through deep features. This model
+explicitly captures style statistics using Gram matrices - the same technique
+used in neural style transfer papers (Gatys et al. 2015).
+
+Gram matrices measure feature correlations across spatial locations, capturing
+texture and style information independent of spatial arrangement.
+
+
+ARCHITECTURE
+------------
+
+Input Image (B, 3, 224, 224)
+    ↓
+ResNet Layers 1-3 (feature extractor)
+    ↓
+Intermediate Features (B, 1024, H, W)  ← Tap here for Gram
+    ↓                                      ↓
+    ↓                                      ↓
+    ↓                            [GRAM BRANCH]
+    ↓                            1×1 Conv (1024 → 512)
+    ↓                            Gram Matrix: (B, 512, 512)
+    ↓                            Flatten: (B, 262144)
+    ↓                            MLP: 262144 → 512 → 256 → num_styles
+    ↓                                      ↓
+    ↓                                 Gram Logits
+ResNet Layer 4 + AvgPool                  ↓
+    ↓                                      ↓
+Final Features (B, 2048)                  ↓
+    ↓                                      ↓
+[MAIN BRANCH]                             ↓
+MLP: 2048 → 512 → num_styles             ↓
+    ↓                                      ↓
+Main Logits ──────────[FUSION]──────── Gram Logits
+                         ↓
+              Weighted Combination (50/50)
+                         ↓
+                   Final Prediction
+
+
+KEY COMPONENTS
+--------------
+
+1. GRAM MATRIX COMPUTATION
+   - Captures style statistics from intermediate features
+   - Formula: G = (1/HW) * F @ F^T  where F is (B, C, H*W)
+   - Result: (B, C, C) symmetric matrix of feature correlations
+
+2. CHANNEL REDUCTION
+   - 1×1 conv reduces 1024 → 512 channels before Gram
+   - Reduces Gram size from 1024×1024 to 512×512
+   - Saves memory and computation (4x reduction)
+
+3. DUAL HEADS
+   - Main Head: Standard deep features (semantic information)
+   - Gram Head: Style statistics (texture/style information)
+   - Both predict style classes independently
+
+4. LATE FUSION
+   - Predictions combined with equal weight (0.5 each)
+   - Formula: output = 0.5 * main_logits + 0.5 * gram_logits
+   - Balances semantic and style information
+
+
+WHY THIS SHOULD WORK
+--------------------
+
+1. EXPLICIT STYLE MODELING
+   - Gram matrices have proven effectiveness in style transfer
+   - Directly measure texture correlations that define artistic style
+
+2. COMPLEMENTARY FEATURES
+   - Main head: Object shapes, composition (semantic)
+   - Gram head: Brushstrokes, textures (style)
+   - Together: Complete picture of artistic style
+
+3. TEXTURE SENSITIVITY
+   - Impressionism: Loose, visible brushstrokes → Distinct Gram pattern
+   - Baroque: Smooth blending, dramatic lighting → Different correlations
+   - Abstract: Bold colors, geometric patterns → Unique texture signature
+
+4. SPATIAL INVARIANCE
+   - Gram matrix is invariant to spatial arrangement
+   - Style is "what" not "where" - perfect for art classification
+
+
+COMPARISON TO BASELINE
+-----------------------
+
+ResNetStyleClassifier (Baseline):
+  - Single path through ResNet
+  - Learns style implicitly from deep features
+  - 512-dim bottleneck → style classes
+
+ResNetGramStyleClassifier (New):
+  - Dual path: deep features + Gram statistics
+  - Explicit style modeling through Gram matrices
+  - 512-dim main + 262k-dim Gram (reduced) → fused prediction
+  - Should capture both semantic and texture information
+
+
+EXPECTED IMPROVEMENTS
+----------------------
+
+1. BETTER TEXTURE DISCRIMINATION
+   - Styles with similar subjects but different techniques
+   - Example: Realism vs Impressionism (same scenes, different brushwork)
+
+2. ROBUSTNESS TO CONTENT
+   - Gram features don't care about object identity
+   - Style classification independent of what is painted
+
+3. INTERPRETABILITY
+   - Can visualize Gram matrices to see style patterns
+   - Can measure which feature correlations matter most
+
+
+TRAINING DETAILS
+-----------------
+
+Model Name: resnet_gram_style
+Task Type: style (single-task classification)
+Parameters:
+  - gram_layer: 'layer3' (1024 channels, more texture-focused)
+  - gram_channels: 512 (reduced from 1024)
+  - fusion_weight: 0.5 (equal weight to both heads)
+  - dropout: 0.6 (same as other models)
+  - weight_decay: 5e-4 (same as other models)
+
+Training is identical to other models - no special handling needed.
+
+
+RESULTS TO WATCH
+----------------
+
+Compare resnet_gram_style vs resnet_style:
+
+1. Overall accuracy (should be higher)
+2. Confusion matrix patterns (fewer texture-related confusions?)
+3. Per-class F1 scores (which styles benefit most?)
+4. Training dynamics (does it converge differently?)
+
+
+HYPERPARAMETERS TO TUNE
+------------------------
+
+If initial results are promising:
+
+1. fusion_weight: Try 0.3, 0.5, 0.7 (how much to weight Gram head)
+2. gram_channels: Try 256, 512, 1024 (Gram matrix size)
+3. gram_layer: Try 'layer4' (more semantic, less texture)
+4. Auxiliary loss weights (train both heads with separate losses)
+
+
+IMPLEMENTATION FILES
+--------------------
+
+models/gram_utils.py            - Gram matrix computation
+models/resnet_models.py         - ResNetGramStyleClassifier class
+models/__init__.py              - Export new model
+train_models.py                 - Added to training loop (7th model)
+evaluate_models.py              - Added to evaluation
+
+
+TOTAL MODELS NOW
+----------------
+
+ResNet Models (4):
+  1. resnet_style          - Standard style classifier
+  2. resnet_artist         - Artist classifier
+  3. resnet_multitask      - Style + artist multi-task
+  4. resnet_gram_style     - Gram-based style classifier [NEW]
+
+ViT Models (3):
+  5. vit_style             - ViT style classifier
+  6. vit_artist            - ViT artist classifier
+  7. vit_multitask         - ViT multi-task
+
+
+USAGE
+-----
+
+Training:
+  python train_models.py --models resnet
+
+Will train all 4 ResNet models including the new Gram-based one.
+
+With 2 GPUs:
+  python train_parallel.py
+
+Will train ResNet models (including Gram) on GPU 0, ViT models on GPU 1.
+
+
+REFERENCES
+----------
+
+Gatys et al. "A Neural Algorithm of Artistic Style" (2015)
+  - Original use of Gram matrices for style representation
+
+Gram matrices capture style by measuring correlation between feature maps,
+ignoring spatial arrangement. This makes them ideal for artistic style
+classification where "how" something is painted matters more than "what".
+
+
+================================================================================

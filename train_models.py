@@ -16,6 +16,7 @@ from datetime import datetime
 
 from models import (
     ResNetStyleClassifier, ResNetArtistClassifier, ResNetMultiTaskClassifier,
+    ResNetGramStyleClassifier,
     ViTStyleClassifier, ViTArtistClassifier, ViTMultiTaskClassifier
 )
 from utils import get_dataloaders
@@ -206,8 +207,13 @@ class Trainer:
         print(f"{'='*60}\n")
 
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.AdamW(self.model.parameters(), lr=learning_rate, weight_decay=1e-4)
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3, verbose=True)
+        optimizer = optim.AdamW(self.model.parameters(), lr=learning_rate, weight_decay=5e-4)
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3, verbose=False)
+
+        # Early stopping
+        best_val_loss = float('inf')
+        patience = 5
+        patience_counter = 0
 
         # Mixed precision training
         scaler = GradScaler() if use_amp else None
@@ -255,6 +261,14 @@ class Trainer:
             # Learning rate scheduling
             scheduler.step(val_loss)
 
+            # Early stopping check
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                patience_counter = 0
+            else:
+                patience_counter += 1
+                print(f"Early stopping counter: {patience_counter}/{patience}")
+
             # Save best model
             if val_acc > self.best_val_acc:
                 self.best_val_acc = val_acc
@@ -264,6 +278,12 @@ class Trainer:
 
             # Save latest checkpoint
             self.save_checkpoint('latest_model.pth', epoch, optimizer)
+
+            # Early stopping
+            if patience_counter >= patience:
+                print(f"\nEarly stopping triggered after {epoch + 1} epochs")
+                print(f"Best Val Accuracy: {self.best_val_acc:.2f}%")
+                break
 
         # Save training history
         self.save_history()
@@ -341,16 +361,20 @@ def main():
     )
 
     # Define models to train
-    # Default: Only train multi-task models (more efficient, does both style + artist)
     models_to_train = []
 
     if args.models in ['all', 'resnet']:
         models_to_train.extend([
+            (ResNetStyleClassifier(num_styles, pretrained=True), 'resnet_style', 'style'),
+            (ResNetArtistClassifier(num_artists, pretrained=True), 'resnet_artist', 'artist'),
             (ResNetMultiTaskClassifier(num_styles, num_artists, pretrained=True), 'resnet_multitask', 'multitask'),
+            (ResNetGramStyleClassifier(num_styles, pretrained=True), 'resnet_gram_style', 'style'),
         ])
 
     if args.models in ['all', 'vit']:
         models_to_train.extend([
+            (ViTStyleClassifier(num_styles, pretrained=True), 'vit_style', 'style'),
+            (ViTArtistClassifier(num_artists, pretrained=True), 'vit_artist', 'artist'),
             (ViTMultiTaskClassifier(num_styles, num_artists, pretrained=True), 'vit_multitask', 'multitask'),
         ])
 

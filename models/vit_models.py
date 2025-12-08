@@ -28,7 +28,7 @@ class ViTStyleClassifier(nn.Module):
         self.backbone.heads.head = nn.Sequential(
             nn.Linear(num_features, 512),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.3),
+            nn.Dropout(0.6),
             nn.Linear(512, num_styles)
         )
 
@@ -61,7 +61,7 @@ class ViTArtistClassifier(nn.Module):
         self.backbone.heads.head = nn.Sequential(
             nn.Linear(num_features, 512),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.3),
+            nn.Dropout(0.6),
             nn.Linear(512, num_artists)
         )
 
@@ -98,21 +98,21 @@ class ViTMultiTaskClassifier(nn.Module):
         self.shared_fc = nn.Sequential(
             nn.Linear(num_features, 768),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.3)
+            nn.Dropout(0.6)
         )
 
         # Task-specific heads
         self.style_head = nn.Sequential(
             nn.Linear(768, 384),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.2),
+            nn.Dropout(0.6),
             nn.Linear(384, num_styles)
         )
 
         self.artist_head = nn.Sequential(
             nn.Linear(768, 384),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.2),
+            nn.Dropout(0.6),
             nn.Linear(384, num_artists)
         )
 
