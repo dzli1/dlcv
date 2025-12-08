@@ -1,0 +1,6 @@
+pip install -r requirements.txt
+python scripts/download_dataset.py
+python scripts/prepare_data.py
+python scripts/visualize_dataset.py
+python train_models.py --batch_size 64 --num_epochs 20 --num_workers 8
+python evaluate_models.py --split test --batch_size 64 --num_workers 8
