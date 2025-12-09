@@ -1,0 +1,10 @@
+{
+    "test_loss": 1.1384458337889778,
+    "test_accuracy": 0.6140740513801575,
+    "test_samples": 2700,
+    "models": [
+        "resnet50",
+        "efficientnet_b0",
+        "vgg16_bn"
+    ]
+}

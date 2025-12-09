@@ -39,7 +39,7 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs, checkpoint
                 running_corrects += torch.sum(preds == labels.data)
             
             epoch_loss = running_loss / len(image_datasets[phase])
-            epoch_acc = running_corrects.double() / len(image_datasets[phase])
+            epoch_acc = running_corrects.float() / len(image_datasets[phase])
             print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
             history[f'{phase}_loss'].append(epoch_loss)

@@ -7,6 +7,20 @@
 *.tiff
 *.webp
 
+# Model checkpoints (very large files)
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.pkl
+*.model
+
+# Zip files
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
 # System files
 .DS_Store
 .DS_Store?

@@ -4,7 +4,7 @@ import torch
 DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
 # File Paths and Data
-DATA_DIR = './data' 
+DATA_DIR = './artset' 
 CHECKPOINT_PATH_BASE = 'best_base_model.pth'
 CHECKPOINT_PATH_TUNE = 'final_best_tuned_model.pth'
 HISTORY_FILE = 'training_history.json'
