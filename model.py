@@ -9,7 +9,7 @@ def setup_model(num_classes, device, freeze_base=True, arch='resnet50'):
         num_classes: Number of output classes
         device: torch device
         freeze_base: Whether to freeze backbone weights
-        arch: Architecture name ('resnet50', 'efficientnet_b0', 'vgg16_bn')
+        arch: Architecture name ('resnet50', 'efficientnet_b0', 'vgg16_bn', 'vit_b_16')
     
     Returns:
         Model ready for training
@@ -53,8 +53,30 @@ def setup_model(num_classes, device, freeze_base=True, arch='resnet50'):
             nn.Dropout(0.5),
             nn.Linear(512, num_classes)
         )
+    
+    elif arch == 'vit_b_16':
+        # Vision Transformer B/16
+        model = models.vit_b_16(weights=models.ViT_B_16_Weights.IMAGENET1K_V1)
+        
+        # Freeze backbone if requested
+        if freeze_base:
+            for param in model.parameters():
+                param.requires_grad = False
+        
+        # Replace classification head
+        num_ftrs = model.heads.head.in_features
+        model.heads.head = nn.Sequential(
+            nn.Linear(num_ftrs, 512),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.6),
+            nn.Linear(512, num_classes)
+        )
+        
+        # Unfreeze head parameters
+        for param in model.heads.head.parameters():
+            param.requires_grad = True
         
     else:
-        raise ValueError(f"Unsupported architecture: {arch}. Choose from 'resnet50', 'efficientnet_b0', 'vgg16_bn'")
+        raise ValueError(f"Unsupported architecture: {arch}. Choose from 'resnet50', 'efficientnet_b0', 'vgg16_bn', 'vit_b_16'")
     
     return model.to(device)

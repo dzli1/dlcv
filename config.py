@@ -1,7 +1,15 @@
 import torch
 
-# Check for and use the M4 Pro's Metal Performance Shaders (MPS)
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+# Check for CUDA first, then MPS (Apple Silicon), then fall back to CPU
+if torch.cuda.is_available():
+    DEVICE = torch.device("cuda")
+    print(f"Using CUDA: {torch.cuda.get_device_name(0)}")
+elif torch.backends.mps.is_available():
+    DEVICE = torch.device("mps")
+    print("Using MPS (Apple Silicon)")
+else:
+    DEVICE = torch.device("cpu")
+    print("Using CPU")
 
 # File Paths and Data
 DATA_DIR = './artset' 

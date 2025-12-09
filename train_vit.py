@@ -55,27 +55,31 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs, checkpoint
     return model, history
 
 if __name__ == '__main__':
-    # --- Phase 1: Base Training ---
-    print("\n" + "="*40 + "\nSTARTING PHASE 1: BASE TRAINING\n" + "="*40)
+    ARCH = 'vit_b_16'
+    BASE_CHECKPOINT = 'best_vit_b_16_base.pth'
+    TUNED_CHECKPOINT = 'best_vit_b_16_tuned.pth'
+    HISTORY_FILE = 'training_history_vit.json'
     
-    model = setup_model(NUM_CLASSES, DEVICE, freeze_base=True)
+    # --- Phase 1: Base Training ---
+    print("\n" + "="*50 + f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING\n" + "="*50)
+    
+    model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=True)
     criterion = nn.CrossEntropyLoss()
-    optimizer_base = optim.Adam(model.fc.parameters(), lr=BASE_LR)
+    # ViT head is a Sequential, get all parameters
+    optimizer_base = optim.Adam(model.heads.head.parameters(), lr=BASE_LR)
 
-    # Function call parameters on one line
-    final_model, history_base = train_model(model, dataloaders, criterion, optimizer_base, NUM_EPOCHS_BASE, CHECKPOINT_PATH_BASE, image_datasets)
-    print(f"Base training complete. Model saved to: {CHECKPOINT_PATH_BASE}")
+    final_model, history_base = train_model(model, dataloaders, criterion, optimizer_base, NUM_EPOCHS_BASE, BASE_CHECKPOINT, image_datasets)
+    print(f"Base training complete. Model saved to: {BASE_CHECKPOINT}")
 
     # --- Phase 2: Fine-Tuning ---
-    print("\n" + "="*40 + "\nSTARTING PHASE 2: FINE-TUNING\n" + "="*40)
+    print("\n" + "="*50 + f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING\n" + "="*50)
     
-    final_model = setup_model(NUM_CLASSES, DEVICE, freeze_base=False)
-    final_model.load_state_dict(torch.load(CHECKPOINT_PATH_BASE))
+    final_model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=False)
+    final_model.load_state_dict(torch.load(BASE_CHECKPOINT, map_location=DEVICE))
     optimizer_tune = optim.Adam(final_model.parameters(), lr=FINE_TUNE_LR)
 
-    # Function call parameters on one line
-    final_model_tuned, history_fine_tune = train_model(final_model, dataloaders, criterion, optimizer_tune, NUM_EPOCHS_TUNE, CHECKPOINT_PATH_TUNE, image_datasets)
-    print(f"Fine-tuning complete. Model saved to: {CHECKPOINT_PATH_TUNE}")
+    final_model_tuned, history_fine_tune = train_model(final_model, dataloaders, criterion, optimizer_tune, NUM_EPOCHS_TUNE, TUNED_CHECKPOINT, image_datasets)
+    print(f"Fine-tuning complete. Model saved to: {TUNED_CHECKPOINT}")
 
     # --- Save History ---
     full_history = {
@@ -88,3 +92,4 @@ if __name__ == '__main__':
     with open(HISTORY_FILE, 'w') as f:
         json.dump(full_history, f, indent=4)
     print(f"\nTraining history saved to {HISTORY_FILE}")
+
