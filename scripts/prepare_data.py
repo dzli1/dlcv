@@ -1,7 +1,3 @@
-"""
-Prepare data for training: split into train/val/test sets and create PyTorch datasets.
-"""
-
 import os
 import json
 import random
@@ -10,23 +6,19 @@ from pathlib import Path
 from collections import Counter
 from tqdm import tqdm
 
-# Configuration
 DATA_DIR = "./data"
 RAW_DIR = os.path.join(DATA_DIR, "raw")
 PROCESSED_DIR = os.path.join(DATA_DIR, "processed")
 METADATA_DIR = os.path.join(DATA_DIR, "metadata")
 
-# Split ratios
 TRAIN_RATIO = 0.8
 VAL_RATIO = 0.1
 TEST_RATIO = 0.1
 
-# Random seed for reproducibility
 RANDOM_SEED = 42
 
 
 def load_metadata():
-    """Load metadata from download step."""
     metadata_file = os.path.join(METADATA_DIR, "dataset_metadata.json")
     with open(metadata_file, 'r') as f:
         metadata = json.load(f)
@@ -39,11 +31,6 @@ def load_metadata():
 
 
 def stratified_split(metadata, mappings):
-    """
-    Split dataset into train/val/test with stratification by style.
-    This ensures balanced representation of each style in all splits.
-    """
-    print("Performing stratified split by style...")
 
     random.seed(RANDOM_SEED)
 
@@ -76,20 +63,10 @@ def stratified_split(metadata, mappings):
     random.shuffle(val_data)
     random.shuffle(test_data)
 
-    print(f"\nSplit statistics:")
-    print(f"  Train: {len(train_data)} images ({len(train_data)/len(metadata)*100:.1f}%)")
-    print(f"  Val:   {len(val_data)} images ({len(val_data)/len(metadata)*100:.1f}%)")
-    print(f"  Test:  {len(test_data)} images ({len(test_data)/len(metadata)*100:.1f}%)")
-
     return train_data, val_data, test_data
 
 
 def organize_images(train_data, val_data, test_data, mappings):
-    """
-    Organize images into train/val/test directories.
-    Also create CSV files with labels for easier loading.
-    """
-    print("\nOrganizing images into train/val/test directories...")
 
     splits = {
         'train': train_data,
@@ -118,42 +95,12 @@ def organize_images(train_data, val_data, test_data, mappings):
                 artist_idx = mappings['artist_to_idx'][item['artist']]
                 f.write(f"{item['filename']},{item['style']},{item['artist']},{style_idx},{artist_idx}\n")
 
-        print(f"  {split_name}: {len(split_data)} images -> {split_dir}")
-        print(f"  Labels saved to {csv_path}")
 
 
 def print_statistics(train_data, val_data, test_data):
-    """Print detailed statistics about the splits."""
-    print("\n" + "="*60)
-    print("Dataset Statistics")
-    print("="*60)
-
-    splits = {
-        'Train': train_data,
-        'Val': val_data,
-        'Test': test_data
-    }
-
-    for split_name, split_data in splits.items():
-        print(f"\n{split_name} Split:")
-
-        # Style distribution
-        style_counts = Counter(item['style'] for item in split_data)
-        print(f"  Total images: {len(split_data)}")
-        print(f"  Styles represented: {len(style_counts)}")
-
-        # Artist distribution
-        artist_counts = Counter(item['artist'] for item in split_data)
-        print(f"  Artists represented: {len(artist_counts)}")
-
-        # Top 5 styles
-        print(f"  Top 5 styles:")
-        for style, count in style_counts.most_common(5):
-            print(f"    {style}: {count} images")
-
+    pass
 
 def create_dataset_summary():
-    """Create a summary JSON with all dataset information."""
     metadata_file = os.path.join(METADATA_DIR, "dataset_metadata.json")
     with open(metadata_file, 'r') as f:
         metadata = json.load(f)
@@ -186,18 +133,12 @@ def create_dataset_summary():
     with open(summary_file, 'w') as f:
         json.dump(summary, f, indent=2)
 
-    print(f"\nDataset summary saved to {summary_file}")
 
 
 def main():
-    """Main execution function."""
-    print("="*60)
-    print("Data Preparation and Splitting")
-    print("="*60)
 
     # Load metadata
     metadata, mappings = load_metadata()
-    print(f"Loaded {len(metadata)} images")
 
     # Perform stratified split
     train_data, val_data, test_data = stratified_split(metadata, mappings)
@@ -205,18 +146,8 @@ def main():
     # Organize images
     organize_images(train_data, val_data, test_data, mappings)
 
-    # Print statistics
-    print_statistics(train_data, val_data, test_data)
-
     # Create summary
     create_dataset_summary()
-
-    print("\n" + "="*60)
-    print("Data preparation complete!")
-    print("="*60)
-    print("\nNext steps:")
-    print("  1. Visualize dataset: python scripts/visualize_dataset.py")
-    print("  2. Train models: python train_models.py")
 
 
 if __name__ == "__main__":
