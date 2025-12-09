@@ -67,7 +67,7 @@
 #             weight_decay=config['weight_decay']
 #         )
 #         scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-#             optimizer, mode='min', factor=0.5, patience=2, verbose=False
+#             optimizer, mode='min', factor=0.5, patience=2
 #         )
 #         scaler = GradScaler() if self.device.type == 'cuda' else None
 
