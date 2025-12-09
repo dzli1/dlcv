@@ -69,7 +69,7 @@ def get_transforms(split='train', image_size=224):
 
     if split == 'train':
         # Data augmentation for training (stronger to prevent overfitting)
-        transforms.Compose([
+        return transforms.Compose([
             transforms.RandomResizedCrop(224, scale=(0.9, 1.0)),  # Gentler
             transforms.RandomHorizontalFlip(p=0.3),
             transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.05, hue=0.0),

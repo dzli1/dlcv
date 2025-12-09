@@ -1,0 +1,26 @@
+================================================================================
+MODEL COMPARISON SUMMARY
+================================================================================
+
+
+RESNET_MULTITASK
+--------------------------------------------------------------------------------
+  Style Classification:
+    Accuracy: 0.7852
+    F1 (Macro): 0.7973
+    F1 (Weighted): 0.7848
+  Artist Classification:
+    Accuracy: 0.7389
+    F1 (Macro): 0.7148
+    F1 (Weighted): 0.7404
+
+VIT_MULTITASK
+--------------------------------------------------------------------------------
+  Style Classification:
+    Accuracy: 0.7698
+    F1 (Macro): 0.7840
+    F1 (Weighted): 0.7698
+  Artist Classification:
+    Accuracy: 0.7288
+    F1 (Macro): 0.7081
+    F1 (Weighted): 0.7299
