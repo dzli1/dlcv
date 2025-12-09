@@ -70,14 +70,13 @@ def get_transforms(split='train', image_size=224):
     if split == 'train':
         # Data augmentation for training (stronger to prevent overfitting)
         return transforms.Compose([
-            transforms.RandomResizedCrop(image_size, scale=(0.8, 1.0)),
-            transforms.RandomHorizontalFlip(p=0.5),
-            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-            transforms.RandomRotation(degrees=15),
-            transforms.GaussianBlur(kernel_size=5, sigma=(0.1, 2.0)),
+            transforms.RandomResizedCrop(224, scale=(0.9, 1.0)),  # Gentler
+            transforms.RandomHorizontalFlip(p=0.3),
+            transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.05, hue=0.0),
+            transforms.RandomRotation(degrees=3),  # Very small
             transforms.ToTensor(),
             normalize,
-            transforms.RandomErasing(p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3))
+            transforms.RandomErasing(p=0.1, scale=(0.02, 0.15))  # Much lower
         ])
     else:
         # No augmentation for val/test

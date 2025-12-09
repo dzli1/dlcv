@@ -1,7 +1,3 @@
-"""
-Vision Transformer (ViT) models for art classification.
-Includes single-task (style-only, artist-only) and multi-task variants.
-"""
 
 import torch
 import torch.nn as nn
@@ -9,7 +5,6 @@ from torchvision import models
 
 
 class ViTStyleClassifier(nn.Module):
-    """Vision Transformer for style classification only."""
 
     def __init__(self, num_styles, pretrained=True, freeze_backbone=False):
         super().__init__()
@@ -128,11 +123,9 @@ class ViTMultiTaskClassifier(nn.Module):
         return style_logits, artist_logits
 
     def unfreeze_backbone(self):
-        """Unfreeze all parameters for fine-tuning."""
         for param in self.backbone.parameters():
             param.requires_grad = True
 
     def get_embeddings(self, x):
-        """Extract shared embeddings for visualization."""
         features = self.backbone(x)
         return self.shared_fc(features)

@@ -11,8 +11,8 @@ echo "=========================================="
 echo ""
 
 # Step 1: Download dataset
-echo "[1/5] Downloading WikiArt dataset from Hugging Face..."
-python scripts/download_dataset.py
+# echo "[1/5] Downloading WikiArt dataset from Hugging Face..."
+# python scripts/download_dataset.py
 
 # Step 2: Prepare data splits
 echo ""
