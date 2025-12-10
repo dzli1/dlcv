@@ -14,7 +14,7 @@ def get_data_transforms():
     }
 
 class TransformDataset:
-    """Wrapper to apply different transforms to a subset of a dataset."""
+    # Wrapper to apply different transforms to a subset of a dataset
     def __init__(self, subset, transform):
         self.subset = subset
         self.transform = transform
@@ -29,22 +29,7 @@ class TransformDataset:
         return len(self.subset)
 
 def get_dataloaders(train_split=0.7, val_split=0.15, test_split=0.15, random_seed=42):
-    """
-    Load data from artset folder and split into train/val/test sets with stratification.
-    Ensures each art category contributes proportionally to each split.
-    
-    Args:
-        train_split: Proportion of data to use for training (default: 0.7)
-        val_split: Proportion of data to use for validation (default: 0.15)
-        test_split: Proportion of data to use for testing (default: 0.15)
-        random_seed: Random seed for reproducibility (default: 42)
-    
-    Returns:
-        dataloaders: Dictionary with 'train', 'val', 'test' DataLoaders
-        image_datasets: Dictionary with 'train', 'val', 'test' datasets
-        NUM_CLASSES: Number of classes
-        class_names: List of class names
-    """
+    # Load data from artset folder and split into train/val/test sets with stratification
     # Validate splits sum to 1.0
     assert abs(train_split + val_split + test_split - 1.0) < 1e-6, "Splits must sum to 1.0"
     

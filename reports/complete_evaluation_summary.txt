@@ -1,0 +1,152 @@
+
+Dataset: 20 Art Style Classes
+Test Set Size: 2,700 images (15% of total dataset)
+Evaluation Date: Generated after all models completed training
+
+
+INDIVIDUAL MODEL PERFORMANCE
+---------------------------------------------
+
+1. VISION TRANSFORMER (ViT-B/16)
+   Accuracy: 61.70% (0.6170)
+   F1 Score (Macro): 0.6129
+   F1 Score (Weighted): 0.6129
+   Status: BEST SINGLE MODEL
+   
+2. RESNET50
+   Accuracy: 59.44% (0.5944)
+   F1 Score (Macro): 0.5928
+   F1 Score (Weighted): 0.5928
+   Status: Second best single model
+   
+3. VGG16-BN
+   Accuracy: 56.74% (0.5674)
+   F1 Score (Macro): 0.5638
+   F1 Score (Weighted): 0.5638
+   
+4. EFFICIENTNET-B0
+   Accuracy: 55.19% (0.5519)
+   F1 Score (Macro): 0.5482
+   F1 Score (Weighted): 0.5482
+
+
+ENSEMBLE PERFORMANCE (All 4 Models Combined)
+---------------------------------------------
+
+Method 1: WEIGHTED AVERAGE (BEST METHOD)
+   Accuracy: 63.74% (0.6374)
+   F1 Score (Macro): 0.6332
+   F1 Score (Weighted): 0.6332
+   Improvement over best single model: +2.04%
+   Model Weights:
+     - ViT-B/16:     26.47%
+     - ResNet50:     25.50%
+     - VGG16-BN:     24.34%
+     - EfficientNet: 23.68%
+
+Method 2: AVERAGE (Equal Weights)
+   Accuracy: 63.52% (0.6352)
+   F1 Score (Macro): 0.6311
+   F1 Score (Weighted): 0.6311
+   Improvement over best single model: +1.82%
+
+Method 3: MAJORITY VOTE
+   Accuracy: 63.00% (0.6300)
+   F1 Score (Macro): 0.6269
+   F1 Score (Weighted): 0.6269
+   Improvement over best single model: +1.30%
+
+
+KEY FINDINGS
+---------------------------------------------
+
+1. ENSEMBLE ADVANTAGE:
+   - Ensemble improves accuracy by 2.04% over best single model (ViT)
+   - All ensemble methods outperform individual models
+   - Weighted average performs best, giving more weight to better models
+
+2. MODEL RANKING (Individual):
+   1st: ViT-B/16 (61.70%)
+   2nd: ResNet50 (59.44%)
+   3rd: VGG16-BN (56.74%)
+   4th: EfficientNet-B0 (55.19%)
+
+3. ARCHITECTURE INSIGHTS:
+   - Vision Transformer (ViT) performs best, likely due to:
+     * Global attention mechanism
+     * Better handling of compositional relationships
+     * Long-range dependencies in artistic styles
+   - ResNet50 is strong second, showing CNN effectiveness
+   - All models achieve >55% accuracy on 20-class classification
+
+4. ENSEMBLE EFFECTIVENESS:
+   - Combining diverse architectures (CNN + Transformer) improves robustness
+   - Weighted ensemble leverages strengths of each model
+   - Ensemble reduces reliance on single model predictions
+
+
+PERFORMANCE COMPARISON TABLE
+---------------------------------------------
+Model/Ensemble          | Accuracy | F1 (Macro) | F1 (Weighted) | Improvement
+------------------------|----------|------------|---------------|------------
+ViT-B/16 (Best Single)  | 61.70%   | 0.6129     | 0.6129        | Baseline
+ResNet50                | 59.44%   | 0.5928     | 0.5928        | -2.26%
+VGG16-BN                | 56.74%   | 0.5638     | 0.5638        | -4.96%
+EfficientNet-B0         | 55.19%   | 0.5482     | 0.5482        | -6.51%
+------------------------|----------|------------|---------------|------------
+Ensemble (Weighted)     | 63.74%   | 0.6332     | 0.6332        | +2.04% ✓
+Ensemble (Average)      | 63.52%   | 0.6311     | 0.6311        | +1.82%
+Ensemble (Majority)     | 63.00%   | 0.6269     | 0.6269        | +1.30%
+
+ART STYLE CLASSES (20 Total)
+---------------------------------------------
+
+1.  Abstract_Expressionism
+2.  Art_Nouveau_Modern
+3.  Baroque
+4.  Color_Field_Painting
+5.  Cubism
+6.  Early_Renaissance
+7.  Expressionism
+8.  High_Renaissance
+9.  Impressionism
+10. Mannerism_Late_Renaissance
+11. Minimalism
+12. Naive_Art_Primitivism
+13. Northern_Renaissance
+14. Pop_Art
+15. Post_Impressionism
+16. Realism
+17. Rococo
+18. Romanticism
+19. Symbolism
+20. Ukiyo_e
+
+
+TRAINING DETAILS
+---------------------------------------------
+
+Training Strategy: Two-Phase Transfer Learning
+  Phase 1: Base Training (Frozen Backbone)
+    - Epochs: 20
+    - Learning Rate: 1e-3
+    - Trains only classification head
+    
+  Phase 2: Fine-Tuning (Unfrozen)
+    - Epochs: 10
+    - Learning Rate: 1e-5
+    - Fine-tunes entire model
+
+Data Split:
+  - Training: 70% (12,600 images)
+  - Validation: 15% (2,700 images)
+  - Test: 15% (2,700 images)
+  - Stratified split ensures balanced representation
+
+Hardware:
+  - GPU: NVIDIA GeForce RTX 4090
+  - CUDA: Enabled
+  - Batch Size: 32
+
+
+

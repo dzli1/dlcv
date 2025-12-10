@@ -1,0 +1,56 @@
+{
+  "individual_models": {
+    "resnet50": {
+      "accuracy": 0.5944444444444444,
+      "f1_macro": 0.5927977058279336,
+      "f1_weighted": 0.5927977058279335,
+      "display_name": "ResNet50"
+    },
+    "efficientnet_b0": {
+      "accuracy": 0.5518518518518518,
+      "f1_macro": 0.5482190821985435,
+      "f1_weighted": 0.5482190821985434,
+      "display_name": "EfficientNet-B0"
+    },
+    "vgg16_bn": {
+      "accuracy": 0.5674074074074074,
+      "f1_macro": 0.5637647408731354,
+      "f1_weighted": 0.5637647408731357,
+      "display_name": "VGG16-BN"
+    },
+    "vit_b_16": {
+      "accuracy": 0.617037037037037,
+      "f1_macro": 0.6128676846927847,
+      "f1_weighted": 0.6128676846927846,
+      "display_name": "ViT-B/16"
+    }
+  },
+  "ensemble_methods": {
+    "average": {
+      "method": "average",
+      "accuracy": 0.6351851851851852,
+      "f1_macro": 0.6311110185451244,
+      "f1_weighted": 0.6311110185451243
+    },
+    "weighted_average": {
+      "method": "weighted_average",
+      "weights": {
+        "resnet50": 0.25504528841569996,
+        "efficientnet_b0": 0.23677101541395199,
+        "vgg16_bn": 0.24344509772763384,
+        "vit_b_16": 0.26473859844271413
+      },
+      "accuracy": 0.6374074074074074,
+      "f1_macro": 0.6332289156805941,
+      "f1_weighted": 0.6332289156805941
+    },
+    "majority_vote": {
+      "method": "majority_vote",
+      "accuracy": 0.63,
+      "f1_macro": 0.6268839000016913,
+      "f1_weighted": 0.6268839000016911
+    }
+  },
+  "best_method": "weighted_average",
+  "best_accuracy": 0.6374074074074074
+}

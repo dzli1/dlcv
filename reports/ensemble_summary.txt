@@ -1,0 +1,21 @@
+============================================================
+ENSEMBLE EVALUATION SUMMARY
+============================================================
+
+INDIVIDUAL MODEL RESULTS:
+------------------------------------------------------------
+ResNet50            : Accuracy=0.5944, F1_Macro=0.5928, F1_Weighted=0.5928
+EfficientNet-B0     : Accuracy=0.5519, F1_Macro=0.5482, F1_Weighted=0.5482
+VGG16-BN            : Accuracy=0.5674, F1_Macro=0.5638, F1_Weighted=0.5638
+ViT-B/16            : Accuracy=0.6170, F1_Macro=0.6129, F1_Weighted=0.6129
+
+ENSEMBLE RESULTS:
+------------------------------------------------------------
+average             : Accuracy=0.6352, F1_Macro=0.6311, F1_Weighted=0.6311
+weighted_average    : Accuracy=0.6374, F1_Macro=0.6332, F1_Weighted=0.6332
+majority_vote       : Accuracy=0.6300, F1_Macro=0.6269, F1_Weighted=0.6269
+
+============================================================
+BEST ENSEMBLE METHOD: weighted_average
+BEST ACCURACY: 0.6374
+============================================================

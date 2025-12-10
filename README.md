@@ -1,374 +1,317 @@
-# Deep Learning Art Classification
+# Art Style Classification with Deep Learning Ensemble
 
-A comprehensive deep learning project for classifying Western art by **artistic style** and **artist** using state-of-the-art computer vision models.
+This project implements a deep learning pipeline for classifying art styles using multiple state-of-the-art architectures (ResNet, EfficientNet, VGG16, and Vision Transformer) and combines them into an ensemble model for improved accuracy.
 
 ## Project Overview
 
-This project trains and evaluates multiple model architectures on the WikiArt dataset to classify paintings by:
-- **Style** (e.g., Impressionism, Baroque, Cubism, etc.)
-- **Artist** (e.g., Vincent van Gogh, Pablo Picasso, etc.)
+The goal of this project is to classify artwork images into 20 different art style categories using transfer learning and ensemble methods. The project trains four different deep learning models independently and then combines their predictions to achieve better performance than any single model.
+
+### Key Features
+
+- **Multi-Architecture Training**: Trains ResNet50, EfficientNet-B0, VGG16-BN, and Vision Transformer (ViT-B/16)
+- **Two-Phase Training**: Base training with frozen backbone, followed by fine-tuning
+- **Ensemble Methods**: Combines predictions using average, weighted average, and majority voting
+- **Comprehensive Evaluation**: Generates confusion matrices, metrics, and detailed reports
+- **GPU Support**: Automatic CUDA detection and utilization
+
+## Project Structure
+
+### Core Configuration Files
+
+#### `config.py`
+Central configuration file containing:
+- Device selection (CUDA/MPS/CPU) with automatic detection
+- Data directory paths
+- Training hyperparameters (batch size, learning rates, epochs)
+- ImageNet normalization parameters
+
+**Key Parameters:**
+- `BATCH_SIZE = 32`
+- `NUM_EPOCHS_BASE = 20` (frozen backbone training)
+- `NUM_EPOCHS_TUNE = 10` (fine-tuning)
+- `BASE_LR = 1e-3` (classification head learning rate)
+- `FINE_TUNE_LR = 1e-5` (fine-tuning learning rate)
+
+#### `data_loader.py`
+Handles data loading and preprocessing:
+- **`get_dataloaders()`**: Creates train/val/test splits with stratification
+- **`get_data_transforms()`**: Defines data augmentation and normalization
+- **`TransformDataset`**: Wrapper for applying different transforms to subsets
+- Performs 70/15/15 stratified split across 20 art style classes
+- Returns DataLoaders and dataset information
+
+#### `model.py`
+Model factory function:
+- **`setup_model()`**: Creates and configures models for different architectures
+- Supports: `resnet50`, `efficientnet_b0`, `vgg16_bn`, `vit_b_16`
+- Handles freezing/unfreezing backbone layers
+- Replaces classification heads with custom layers (512 hidden units)
+
+### Training Scripts
+
+#### `train_resnet.py`
+Trains ResNet50 model:
+- **Phase 1**: Trains only the classification head (frozen backbone)
+- **Phase 2**: Fine-tunes entire model (unfrozen)
+- Saves checkpoints: `best_resnet50_base.pth`, `final_best_tuned_model.pth`
+- Saves history: `training_history_resnet.json`
+
+#### `train_efficientnet.py`
+Trains EfficientNet-B0 model:
+- Same two-phase training approach
+- Saves checkpoints: `best_efficientnet_b0.pth`, `best_efficientnet_b0_tuned.pth`
+- Saves history: `training_history_efficientnet.json`
+
+#### `train_vgg16.py`
+Trains VGG16-BN model:
+- Same two-phase training approach
+- Saves checkpoints: `best_vgg16_bn.pth`, `best_vgg16_bn_tuned.pth`
+- Saves history: `training_history_vgg16.json`
+
+#### `train_vit.py`
+Trains Vision Transformer (ViT-B/16) model:
+- Same two-phase training approach
+- Uses transformer architecture for global attention
+- Saves checkpoints: `best_vit_b_16_base.pth`, `best_vit_b_16_tuned.pth`
+- Saves history: `training_history_vit.json`
+
+### Evaluation Scripts
+
+#### `test_individual_models.py`
+Tests individual models on the test set:
+- Evaluates ResNet, EfficientNet, and VGG16 separately
+- Reports accuracy, F1-macro, and F1-weighted scores
+- Prints summary comparison of all models
+
+**Usage:**
+```bash
+python test_individual_models.py
+```
+
+#### `generate_confusion_matrices.py`
+Generates confusion matrices for all trained models:
+- Evaluates each model on test set
+- Creates normalized and raw confusion matrices
+- Saves metrics JSON files
+- Outputs saved to `reports/confusion_matrices/{model_name}/`
+
+**Usage:**
+```bash
+python generate_confusion_matrices.py
+```
+
+**Output Files:**
+- `test_confusion_matrix_normalized.png` - Normalized percentages
+- `test_confusion_matrix_raw.png` - Raw prediction counts
+- `test_metrics.json` - Detailed metrics
+
+#### `evaluate_ensemble.py`
+Evaluates ensemble of all models:
+- **Step 1**: Evaluates each model individually on test set
+- **Step 2**: Combines predictions using three methods:
+  - **Average**: Equal weights for all models
+  - **Weighted Average**: Weights based on individual model accuracy
+  - **Majority Vote**: Voting-based combination
+- Reports best ensemble method
+- Saves results to `reports/ensemble_results.json` and `reports/ensemble_summary.txt`
+
+**Usage:**
+```bash
+python evaluate_ensemble.py
+```
+
+### Utility Modules
+
+#### `utils/metrics.py`
+Evaluation metrics and visualization:
+- **`calculate_metrics()`**: Computes accuracy, F1 scores (macro/weighted)
+- **`plot_confusion_matrix()`**: Generates confusion matrix visualizations
+- **`plot_training_curves()`**: Creates training/validation curves
+- **`save_metrics_json()`**: Saves metrics to JSON format
+
+#### `utils/dataset.py`
+Additional dataset utilities (if needed for other pipelines)
 
 ### Model Architectures
-- **ResNet50**: Convolutional neural network with residual connections
-  - Style-only classifier
-  - Artist-only classifier
-  - Multi-task classifier (style + artist)
 
-- **Vision Transformer (ViT)**: Attention-based architecture
-  - Style-only classifier
-  - Artist-only classifier
-  - Multi-task classifier (style + artist)
+#### `models/resnet_models.py`
+ResNet-based model implementations (for multi-task variants)
 
-## Setup Instructions
+#### `models/vit_models.py`
+Vision Transformer model implementations (for multi-task variants)
 
-### Prerequisites
-- Python 3.8+
-- CUDA-compatible GPU (recommended for GCP) or Apple Silicon (MPS) for local testing
-- 50GB+ free disk space for dataset
+## Dataset
 
-### Installation
+The project uses an art style classification dataset with:
+- **20 art style classes**: Abstract_Expressionism, Art_Nouveau_Modern, Baroque, Color_Field_Painting, Cubism, Early_Renaissance, Expressionism, High_Renaissance, Impressionism, Mannerism_Late_Renaissance, Minimalism, Naive_Art_Primitivism, Northern_Renaissance, Pop_Art, Post_Impressionism, Realism, Rococo, Romanticism, Symbolism, Ukiyo_e
+- **Data location**: `./artset/` (organized by class folders)
+- **Total images**: ~18,000 images
+- **Split**: 70% train, 15% validation, 15% test (stratified)
 
-1. **Clone the repository** (if on GCP, upload files):
-```bash
-cd dlcv
-```
+## Installation
 
-2. **Install dependencies**:
+1. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage Workflow
+2. **Ensure CUDA is available** (for GPU training):
+   - The script automatically detects and uses CUDA if available
+   - For CPU-only, it will fall back automatically
 
-Follow these steps in order to run the complete pipeline:
+## Usage
 
-### Step 1: Download Dataset
+### Training Models
 
-Download the WikiArt dataset from Hugging Face and filter to top 10-12 styles and 50-100 artists:
-
-```bash
-python scripts/download_dataset.py
-```
-
-This will:
-- Download WikiArt from Hugging Face
-- Filter to most common styles (with at least 500 images)
-- Filter to most common artists (with at least 50 images)
-- Save filtered images to `data/raw/`
-- Create metadata files in `data/metadata/`
-
-**Expected output:**
-- `data/raw/` - Filtered images
-- `data/metadata/dataset_metadata.json` - Image metadata
-- `data/metadata/label_mappings.json` - Style/artist label mappings
-
-### Step 2: Prepare Data Splits
-
-Split the dataset into train/val/test sets (80/10/10):
+Train each model individually (can be run in parallel in separate terminals):
 
 ```bash
-python scripts/prepare_data.py
+# Train ResNet50
+python train_resnet.py
+
+# Train EfficientNet-B0
+python train_efficientnet.py
+
+# Train VGG16-BN
+python train_vgg16.py
+
+# Train ViT-B/16
+python train_vit.py
 ```
 
-This will:
-- Perform stratified split by style
-- Organize images into `data/processed/{train,val,test}/`
-- Create CSV files with labels
-- Generate dataset summary
-
-**Expected output:**
-- `data/processed/train/` - Training images
-- `data/processed/val/` - Validation images
-- `data/processed/test/` - Test images
-- `data/processed/{train,val,test}_labels.csv` - Label files
-
-### Step 3: Visualize Dataset
-
-Explore the dataset distribution and sample images:
-
-```bash
-python scripts/visualize_dataset.py
-```
-
-This will create:
-- Style and artist distribution plots
-- Sample images from each style
-- Artist-style heatmap
-- Dataset statistics report
-
-**Expected output:**
-- `data/figures/style_distribution.png`
-- `data/figures/artist_distribution_top30.png`
-- `data/figures/sample_images_by_style.png`
-- `data/figures/artist_style_heatmap.png`
-- `data/figures/dataset_statistics.txt`
-
-### Step 4: Train Models
-
-Train multi-task models (both ResNet and ViT):
-
-```bash
-# Train both models (ResNet + ViT multi-task)
-python train_models.py --batch_size 64 --num_epochs 20 --num_workers 8
-
-# Or train specific architecture
-python train_models.py --models resnet  # ResNet only
-python train_models.py --models vit     # ViT only
-```
-
-**Training options:**
-- `--batch_size`: Batch size (default: 64)
-- `--num_epochs`: Number of training epochs (default: 30, recommend 20 for speed)
-- `--learning_rate`: Learning rate (default: 1e-4)
-- `--num_workers`: Data loading workers (default: 8)
-- `--models`: Which models to train (all/resnet/vit)
-- `--no_amp`: Disable mixed precision training
-
-**Expected output:**
-- `checkpoints/{model_name}/best_model.pth` - Best model checkpoint
-- `checkpoints/{model_name}/latest_model.pth` - Latest checkpoint
-- `logs/{model_name}/training_history.json` - Training metrics
-- `logs/{model_name}/training_curves.png` - Training/validation curves
-
-**Models trained (2 multi-task models):**
-1. `resnet_multitask` - ResNet50 for both style and artist
-2. `vit_multitask` - ViT for both style and artist
-
-Note: Multi-task models are more efficient than training separate models for each task.
-
-### Step 5: Evaluate Models
-
-Evaluate all trained models and generate comprehensive reports:
-
-```bash
-# Evaluate on test set
-python evaluate_models.py --split test --batch_size 64 --num_workers 8
-
-# Evaluate on validation set
-python evaluate_models.py --split val
-```
-
-This will generate:
-- Confusion matrices for each model
-- Embedding visualizations (t-SNE)
-- Detailed metrics (accuracy, F1 scores)
-- Model comparison report
-
-**Expected output:**
-- `reports/{model_name}/test_metrics.json` - Detailed metrics
-- `reports/confusion_matrices/{model_name}/test_*_confusion_matrix.png` - Confusion matrices
-- `reports/embeddings/{model_name}/test_embeddings_*.png` - t-SNE visualizations
-- `reports/model_comparison.json` - Cross-model comparison
-- `reports/comparison_summary.txt` - Summary report
-
-## Directory Structure
-
-```
-dlcv/
-├── README.md                      # This file
-├── requirements.txt               # Python dependencies
-├── PLAN.md                       # Project planning document
-│
-├── scripts/                      # Data preparation scripts
-│   ├── download_dataset.py       # Download WikiArt from Hugging Face
-│   ├── prepare_data.py           # Split and organize data
-│   └── visualize_dataset.py      # Dataset visualizations
-│
-├── models/                       # Model architectures
-│   ├── __init__.py
-│   ├── resnet_models.py          # ResNet variants
-│   └── vit_models.py             # ViT variants
-│
-├── utils/                        # Utilities
-│   ├── __init__.py
-│   ├── dataset.py                # Dataset and DataLoader
-│   └── metrics.py                # Evaluation metrics
-│
-├── train_models.py               # Main training script
-├── evaluate_models.py            # Evaluation script
-│
-├── data/                         # Data directory
-│   ├── raw/                      # Downloaded images
-│   ├── processed/                # Train/val/test splits
-│   │   ├── train/
-│   │   ├── val/
-│   │   └── test/
-│   ├── metadata/                 # Dataset metadata
-│   └── figures/                  # Dataset visualizations
-│
-├── checkpoints/                  # Model checkpoints
-│   ├── resnet_style/
-│   ├── resnet_artist/
-│   ├── resnet_multitask/
-│   ├── vit_style/
-│   ├── vit_artist/
-│   └── vit_multitask/
-│
-├── logs/                         # Training logs
-│   └── {model_name}/
-│       ├── training_history.json
-│       └── training_curves.png
-│
-└── reports/                      # Evaluation reports
-    ├── {model_name}/
-    │   └── test_metrics.json
-    ├── confusion_matrices/
-    │   └── {model_name}/
-    ├── embeddings/
-    │   └── {model_name}/
-    ├── model_comparison.json
-    └── comparison_summary.txt
-```
-
-## Google Cloud Platform (GCP) Setup
-
-### 1. Create GCP Instance
-
-Recommended configuration:
-- **Machine type**: n1-highmem-8 (8 vCPUs, 52 GB memory)
-- **GPU**: 1x NVIDIA T4 or V100
-- **Boot disk**: 100 GB SSD
-- **OS**: Ubuntu 20.04 LTS with CUDA pre-installed
-
-### 2. Upload Code to GCP
-
-```bash
-# From local machine
-gcloud compute scp --recurse /path/to/dlcv [INSTANCE_NAME]:~/ --zone=[ZONE]
-
-# Or use Cloud Storage
-gsutil -m cp -r /path/to/dlcv gs://[BUCKET_NAME]/
-```
-
-### 3. SSH into Instance
-
-```bash
-gcloud compute ssh [INSTANCE_NAME] --zone=[ZONE]
-```
-
-### 4. Install Dependencies
-
-```bash
-cd dlcv
-pip install -r requirements.txt
-```
-
-### 5. Run Pipeline
-
-```bash
-# Download and prepare data
-python scripts/download_dataset.py
-python scripts/prepare_data.py
-python scripts/visualize_dataset.py
-
-# Train all models
-python train_models.py --batch_size 64 --num_epochs 30
-
-# Evaluate
-python evaluate_models.py --split test
-```
-
-### 6. Download Results
-
-```bash
-# From local machine
-gcloud compute scp --recurse [INSTANCE_NAME]:~/dlcv/checkpoints ./checkpoints --zone=[ZONE]
-gcloud compute scp --recurse [INSTANCE_NAME]:~/dlcv/reports ./reports --zone=[ZONE]
-gcloud compute scp --recurse [INSTANCE_NAME]:~/dlcv/logs ./logs --zone=[ZONE]
-```
-
-## Quick Start Summary
-
-```bash
-# Complete pipeline in order:
-python scripts/download_dataset.py                              # Step 1: Download data
-python scripts/prepare_data.py                                  # Step 2: Prepare splits
-python scripts/visualize_dataset.py                             # Step 3: Visualize data
-python train_models.py --batch_size 64 --num_epochs 20          # Step 4: Train 2 models
-python evaluate_models.py --split test                          # Step 5: Evaluate models
-```
-
-**Total time:**
-- Single GPU (L4/T4/V100): ~4-8 hours
-- Dual GPU (2x L4/T4/V100): ~3-5 hours (use `train_parallel.py`)
-
-## Parallel Training (Optional - For 2+ GPUs)
-
-If you have multiple GPUs, train both models simultaneously to cut time in half:
-
-```bash
-# Automatically detects GPUs and trains in parallel
-python train_parallel.py --batch_size 64 --num_epochs 20
-
-# ResNet trains on GPU 0, ViT on GPU 1 simultaneously
-# Time: ~1-2.5 hours for training (half of sequential)
-```
-
-**GPU Memory Requirements:**
-- ResNet Multi-task: ~10 GB VRAM
-- ViT Multi-task: ~12 GB VRAM
-- **Cannot train both on single L4 (24GB)** - too tight, will crash
-- **Sequential training recommended for single GPU**
-
-## Key Features
-
-### Data Pipeline
-- Automatic download from Hugging Face
-- Smart filtering by style/artist frequency
-- Stratified train/val/test split
-- Comprehensive data augmentation
-
-### Model Training
-- Transfer learning from ImageNet pretrained models
-- Mixed precision training (AMP) for faster training
-- Learning rate scheduling
-- Best model checkpointing
-- Training history tracking
+Each training script:
+1. Loads data with stratified train/val/test splits
+2. **Phase 1**: Trains classification head with frozen backbone (20 epochs)
+3. **Phase 2**: Fine-tunes entire model (10 epochs)
+4. Saves best checkpoints and training history
 
 ### Evaluation
-- Multi-metric evaluation (accuracy, F1 scores)
-- Confusion matrices
-- t-SNE embedding visualizations
-- Cross-model comparison
 
-### Visualizations
-- Dataset distribution analysis
-- Training/validation curves
-- Confusion matrices per model
-- Embedding space visualizations
-- Artist-style relationship heatmaps
+After training completes:
 
-## Expected Results
+1. **Test individual models:**
+```bash
+python test_individual_models.py
+```
 
-After training, you should see:
-- **Style classification**: 60-80% accuracy (depending on number of styles)
-- **Artist classification**: 40-70% accuracy (depending on number of artists)
-- **Multi-task models**: Slight performance trade-off vs single-task, but more efficient
+2. **Generate confusion matrices:**
+```bash
+python generate_confusion_matrices.py
+```
 
-ViT models typically perform slightly better than ResNet on art classification due to better handling of artistic style features.
+3. **Evaluate ensemble:**
+```bash
+python evaluate_ensemble.py
+```
 
-## Troubleshooting
+## Results
 
-### Out of Memory (OOM)
-- Reduce batch size: `--batch_size 32` or `--batch_size 16`
-- Reduce number of workers: `--num_workers 4`
+### Individual Model Performance (Test Set)
 
-### Slow Training
-- Ensure GPU is being used (check with `nvidia-smi`)
-- Enable mixed precision (remove `--no_amp`)
-- Increase batch size if memory allows
+| Model | Accuracy | F1 (Macro) | F1 (Weighted) |
+|-------|----------|------------|---------------|
+| **ViT-B/16** | **61.70%** | 0.6129 | 0.6129 |
+| **ResNet50** | **59.44%** | 0.5928 | 0.5928 |
+| **VGG16-BN** | **56.74%** | 0.5638 | 0.5638 |
+| **EfficientNet-B0** | **55.19%** | 0.5482 | 0.5482 |
 
-### Dataset Download Issues
-- Check Hugging Face availability
-- Ensure sufficient disk space
-- Try alternative dataset names in `download_dataset.py`
+**Key Findings:**
+- Vision Transformer (ViT) performs best as a single model
+- All models achieve >55% accuracy on 20-class classification
+- ResNet50 is the second-best performing model
 
-## License
+### Ensemble Performance
 
-This project is for educational purposes.
+| Ensemble Method | Accuracy | F1 (Macro) | Improvement Over Best Single Model |
+|----------------|----------|------------|-----------------------------------|
+| **Weighted Average** | **63.74%** | 0.6332 | **+2.04%** over ViT |
+| **Average (Equal Weights)** | **63.52%** | 0.6311 | **+1.82%** over ViT |
+| **Majority Vote** | **63.00%** | 0.6269 | **+1.30%** over ViT |
 
-## Acknowledgments
+**Key Findings:**
+- Ensemble improves accuracy by **2.04%** over the best single model
+- Weighted average (by individual accuracy) performs best
+- All ensemble methods outperform individual models
+- The ensemble achieves **63.74% accuracy** on the test set
 
-- WikiArt dataset from Hugging Face
-- PyTorch and torchvision for deep learning framework
-- Pre-trained models from ImageNet
+### Output Files
+
+All results are saved in the `reports/` directory:
+
+```
+reports/
+├── confusion_matrices/
+│   ├── resnet50/
+│   │   ├── test_confusion_matrix_normalized.png
+│   │   ├── test_confusion_matrix_raw.png
+│   │   └── test_metrics.json
+│   ├── efficientnet_b0/
+│   ├── vgg16_bn/
+│   └── vit_b_16/
+├── ensemble_results.json
+└── ensemble_summary.txt
+```
+
+## Technical Details
+
+### Training Strategy
+
+**Two-Phase Training Approach:**
+
+1. **Phase 1 - Base Training:**
+   - Freezes pretrained backbone (ImageNet weights)
+   - Trains only the new classification head
+   - Learning rate: 1e-3
+   - Epochs: 20
+   - Purpose: Learn to map pretrained features to art style classes
+
+2. **Phase 2 - Fine-Tuning:**
+   - Unfreezes entire model
+   - Fine-tunes all layers with smaller learning rate
+   - Learning rate: 1e-5
+   - Epochs: 10
+   - Purpose: Adapt pretrained features to art classification task
+
+### Model Architectures
+
+- **ResNet50**: Deep residual network with 50 layers, hierarchical feature extraction
+- **EfficientNet-B0**: Efficient architecture balancing depth, width, and resolution
+- **VGG16-BN**: Deep convolutional network with batch normalization
+- **ViT-B/16**: Vision Transformer using self-attention for global context
+
+### Ensemble Methods
+
+1. **Average (Equal Weights)**: Simple average of all model probabilities
+2. **Weighted Average**: Weighted by individual model accuracy
+3. **Majority Vote**: Voting-based combination with weighted votes
+
+## Project Philosophy
+
+This project demonstrates:
+- **Transfer Learning**: Using pretrained ImageNet models for art classification
+- **Ensemble Learning**: Combining multiple models for improved performance
+- **Architecture Diversity**: Using both CNN (ResNet, EfficientNet, VGG) and Transformer (ViT) architectures
+- **Comprehensive Evaluation**: Detailed metrics, confusion matrices, and ensemble analysis
+
+The ensemble approach leverages the complementary strengths of different architectures:
+- CNNs excel at local feature extraction (textures, brushstrokes)
+- Transformers excel at global context and long-range dependencies (composition)
+- Combining them provides robust classification across diverse art styles
+
+## Requirements
+
+See `requirements.txt` for full list. Key dependencies:
+- PyTorch (with CUDA support recommended)
+- torchvision
+- numpy
+- matplotlib
+- seaborn
+- scikit-learn
+- tqdm
+
+## Notes
+
+- Models can be trained in parallel on separate GPUs/terminals
+- Training time varies by model: ~1-3 hours per model on RTX 4090
+- All models use the same data splits for fair comparison
+- Checkpoints are saved after each phase for resumability

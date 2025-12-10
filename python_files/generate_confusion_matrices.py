@@ -1,3 +1,4 @@
+# Generate confusion matrices for all trained models
 
 import os
 import torch
@@ -13,7 +14,7 @@ from utils.metrics import plot_confusion_matrix, calculate_metrics, save_metrics
 
 
 def evaluate_model(model, dataloader, device):
-    
+    # Evaluate model and return predictions and true labels
     model.eval()
     all_preds = []
     all_labels = []
@@ -33,8 +34,8 @@ def evaluate_model(model, dataloader, device):
 
 
 def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='reports/confusion_matrices'):
-    
- 
+    # Generate confusion matrix for a specific model
+    print(f"\nEvaluating {arch.upper()}\n")
     
     # Check if checkpoint exists
     if not os.path.exists(checkpoint_path):
@@ -68,13 +69,10 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
     metrics = calculate_metrics(true_labels, predictions, class_names=class_names)
     
     # Print summary
-    print(f"\n{'='*60}")
-    print(f"Results for {arch.upper()}")
-    print(f"{'='*60}")
+    print(f"\nResults for {arch.upper()}")
     print(f"Accuracy: {metrics['accuracy']:.4f}")
     print(f"F1 Score (Macro): {metrics['f1_macro']:.4f}")
-    print(f"F1 Score (Weighted): {metrics['f1_weighted']:.4f}")
-    print(f"{'='*60}\n")
+    print(f"F1 Score (Weighted): {metrics['f1_weighted']:.4f}\n")
     
     # Create output directory
     model_output_dir = os.path.join(output_dir, arch)
@@ -82,11 +80,11 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
     
     # Generate confusion matrix (normalized)
     cm_path_normalized = os.path.join(model_output_dir, 'test_confusion_matrix_normalized.png')
-   
+    print(f"Generating normalized confusion matrix...")
     plot_confusion_matrix(
         true_labels, predictions, class_names,
         cm_path_normalized,
-        title=f'Test Set Confusion Matrix (Normalized)',
+        title=f'{arch.upper()} - Test Set Confusion Matrix (Normalized)',
         normalize=True
     )
     print(f"Saved to: {cm_path_normalized}")
@@ -111,11 +109,11 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
     del model
     torch.cuda.empty_cache() if torch.cuda.is_available() else None
     
-    print(f"\nCompleted evaluation for {arch.upper()}\n")
+    print(f"\n✓ Completed evaluation for {arch.upper()}\n")
 
 
 def main():
-    """Main function to generate confusion matrices for all models."""
+    # Main function to generate confusion matrices for all models
     
     # Define models and their checkpoint paths
     models_config = [
@@ -141,9 +139,7 @@ def main():
         }
     ]
     
-    print("\n" + "="*60)
-    print("CONFUSION MATRIX GENERATION")
-    print("="*60)
+    print("\nCONFUSION MATRIX GENERATION")
     print("\nThis script will evaluate all trained models and generate confusion matrices.")
     print("Make sure all models have finished training before running this script.\n")
     
@@ -161,16 +157,12 @@ def main():
             results[arch] = f'error: {str(e)}'
     
     # Summary
-    print("\n" + "="*60)
-    print("SUMMARY")
-    print("="*60)
+    print("\nSUMMARY")
     for model_config in models_config:
         arch = model_config['arch']
         status = results.get(arch, 'not processed')
         print(f"{model_config['display_name']:20s}: {status}")
-    print("="*60)
-    print("\nAll confusion matrices saved to: reports/confusion_matrices/")
-    print("="*60 + "\n")
+    print("\nAll confusion matrices saved to: reports/confusion_matrices/\n")
 
 
 if __name__ == '__main__':

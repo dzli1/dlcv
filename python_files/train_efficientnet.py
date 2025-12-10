@@ -61,7 +61,7 @@ if __name__ == '__main__':
     HISTORY_FILE = 'training_history_efficientnet.json'
     
     # --- Phase 1: Base Training ---
-    print("\n" + "="*50 + f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING\n" + "="*50)
+    print(f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING")
     
     model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=True)
     criterion = nn.CrossEntropyLoss()
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     print(f"Base training complete. Model saved to: {BASE_CHECKPOINT}")
 
     # --- Phase 2: Fine-Tuning ---
-    print("\n" + "="*50 + f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING\n" + "="*50)
+    print(f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING")
     
     final_model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=False)
     final_model.load_state_dict(torch.load(BASE_CHECKPOINT))

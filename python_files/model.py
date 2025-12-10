@@ -2,7 +2,7 @@ import torch.nn as nn
 from torchvision import models
 
 def setup_model(num_classes, device, freeze_base=True, arch='resnet50'):
- 
+    # Setup model with support for multiple architectures
     if arch == 'resnet50':
         model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
         

@@ -49,7 +49,7 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs, checkpoint
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
                 torch.save(model.state_dict(), checkpoint_path)
-                print(f"Model saved. New best validation accuracy: {best_acc:.4f}")
+                print(f"Model saved! New best validation accuracy: {best_acc:.4f}")
                     
     model.load_state_dict(best_model_wts)
     return model, history
@@ -60,19 +60,19 @@ if __name__ == '__main__':
     TUNED_CHECKPOINT = 'best_vit_b_16_tuned.pth'
     HISTORY_FILE = 'training_history_vit.json'
     
-    #phase 1
-    print("\n" + "="*50 + f"\nPHASE 1 - BASE TRAINING\n" + "="*50)
+    # --- Phase 1: Base Training ---
+    print(f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING")
     
     model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=True)
     criterion = nn.CrossEntropyLoss()
-    
+    # ViT head is a Sequential, get all parameters
     optimizer_base = optim.Adam(model.heads.head.parameters(), lr=BASE_LR)
 
     final_model, history_base = train_model(model, dataloaders, criterion, optimizer_base, NUM_EPOCHS_BASE, BASE_CHECKPOINT, image_datasets)
     print(f"Base training complete. Model saved to: {BASE_CHECKPOINT}")
 
-    #phase 2
-    print("\n" + "="*50 + f"\nPHASE 2 - FINE-TUNING\n" + "="*50)
+    # --- Phase 2: Fine-Tuning ---
+    print(f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING")
     
     final_model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=False)
     final_model.load_state_dict(torch.load(BASE_CHECKPOINT, map_location=DEVICE))
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     final_model_tuned, history_fine_tune = train_model(final_model, dataloaders, criterion, optimizer_tune, NUM_EPOCHS_TUNE, TUNED_CHECKPOINT, image_datasets)
     print(f"Fine-tuning complete. Model saved to: {TUNED_CHECKPOINT}")
 
-    # saving history
+    # --- Save History ---
     full_history = {
         'base_train_loss': history_base['train_loss'], 'base_val_loss': history_base['val_loss'],
         'base_train_acc': history_base['train_acc'], 'base_val_acc': history_base['val_acc'],

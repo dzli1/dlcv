@@ -55,23 +55,24 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs, checkpoint
     return model, history
 
 if __name__ == '__main__':
-    ARCH = 'resnet50'
-    BASE_CHECKPOINT = 'best_resnet50_base.pth'
-    TUNED_CHECKPOINT = 'final_best_tuned_model.pth'
-    HISTORY_FILE = 'training_history_resnet.json'
+    ARCH = 'vgg16_bn'
+    BASE_CHECKPOINT = 'best_vgg16_bn.pth'
+    TUNED_CHECKPOINT = 'best_vgg16_bn_tuned.pth'
+    HISTORY_FILE = 'training_history_vgg16.json'
     
     # --- Phase 1: Base Training ---
-    print("\n" + "="*50 + f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING\n" + "="*50)
+    print(f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING")
     
     model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=True)
     criterion = nn.CrossEntropyLoss()
-    optimizer_base = optim.Adam(model.fc.parameters(), lr=BASE_LR)
+    # VGG16 classifier[6] is now a Sequential, get its parameters
+    optimizer_base = optim.Adam(model.classifier[6].parameters(), lr=BASE_LR)
 
     final_model, history_base = train_model(model, dataloaders, criterion, optimizer_base, NUM_EPOCHS_BASE, BASE_CHECKPOINT, image_datasets)
     print(f"Base training complete. Model saved to: {BASE_CHECKPOINT}")
 
     # --- Phase 2: Fine-Tuning ---
-    print("\n" + "="*50 + f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING\n" + "="*50)
+    print(f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING")
     
     final_model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=False)
     final_model.load_state_dict(torch.load(BASE_CHECKPOINT))
