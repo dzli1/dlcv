@@ -129,17 +129,6 @@ Evaluation metrics and visualization:
 - **`plot_training_curves()`**: Creates training/validation curves
 - **`save_metrics_json()`**: Saves metrics to JSON format
 
-#### `utils/dataset.py`
-Additional dataset utilities (if needed for other pipelines)
-
-### Model Architectures
-
-#### `models/resnet_models.py`
-ResNet-based model implementations (for multi-task variants)
-
-#### `models/vit_models.py`
-Vision Transformer model implementations (for multi-task variants)
-
 ## Dataset
 
 The project uses an art style classification dataset with:
@@ -234,26 +223,6 @@ python evaluate_ensemble.py
 - All ensemble methods outperform individual models
 - The ensemble achieves **63.74% accuracy** on the test set
 
-### Output Files
-
-All results are saved in the `reports/` directory:
-
-```
-reports/
-├── confusion_matrices/
-│   ├── resnet50/
-│   │   ├── test_confusion_matrix_normalized.png
-│   │   ├── test_confusion_matrix_raw.png
-│   │   └── test_metrics.json
-│   ├── efficientnet_b0/
-│   ├── vgg16_bn/
-│   └── vit_b_16/
-├── ensemble_results.json
-└── ensemble_summary.txt
-```
-
-## Technical Details
-
 ### Training Strategy
 
 **Two-Phase Training Approach:**
@@ -284,19 +253,6 @@ reports/
 1. **Average (Equal Weights)**: Simple average of all model probabilities
 2. **Weighted Average**: Weighted by individual model accuracy
 3. **Majority Vote**: Voting-based combination with weighted votes
-
-## Project Philosophy
-
-This project demonstrates:
-- **Transfer Learning**: Using pretrained ImageNet models for art classification
-- **Ensemble Learning**: Combining multiple models for improved performance
-- **Architecture Diversity**: Using both CNN (ResNet, EfficientNet, VGG) and Transformer (ViT) architectures
-- **Comprehensive Evaluation**: Detailed metrics, confusion matrices, and ensemble analysis
-
-The ensemble approach leverages the complementary strengths of different architectures:
-- CNNs excel at local feature extraction (textures, brushstrokes)
-- Transformers excel at global context and long-range dependencies (composition)
-- Combining them provides robust classification across diverse art styles
 
 ## Requirements
 
