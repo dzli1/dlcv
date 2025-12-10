@@ -43,16 +43,13 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
         return
     
     # Load data
-    print("Loading data...")
     dataloaders, image_datasets, num_classes, class_names = get_dataloaders()
     test_loader = dataloaders['test']
     
     # Setup model
-    print(f"Loading model: {arch}...")
     model = setup_model(num_classes, DEVICE, arch=arch, freeze_base=False)
     
     # Load checkpoint
-    print(f"Loading checkpoint from {checkpoint_path}...")
     try:
         model.load_state_dict(torch.load(checkpoint_path, map_location=DEVICE))
         print("Checkpoint loaded successfully!")
@@ -61,11 +58,9 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
         return
     
     # Evaluate model
-    print("\nEvaluating on test set...")
     predictions, true_labels = evaluate_model(model, test_loader, DEVICE)
     
     # Calculate metrics
-    print("\nCalculating metrics...")
     metrics = calculate_metrics(true_labels, predictions, class_names=class_names)
     
     # Print summary
@@ -80,7 +75,6 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
     
     # Generate confusion matrix (normalized)
     cm_path_normalized = os.path.join(model_output_dir, 'test_confusion_matrix_normalized.png')
-    print(f"Generating normalized confusion matrix...")
     plot_confusion_matrix(
         true_labels, predictions, class_names,
         cm_path_normalized,
@@ -91,7 +85,6 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
     
     # Generate confusion matrix (raw counts)
     cm_path_raw = os.path.join(model_output_dir, 'test_confusion_matrix_raw.png')
-    print(f"Generating raw confusion matrix...")
     plot_confusion_matrix(
         true_labels, predictions, class_names,
         cm_path_raw,
@@ -109,7 +102,7 @@ def generate_confusion_matrix_for_model(arch, checkpoint_path, output_dir='repor
     del model
     torch.cuda.empty_cache() if torch.cuda.is_available() else None
     
-    print(f"\n✓ Completed evaluation for {arch.upper()}\n")
+    print(f"\nCompleted evaluation for {arch.upper()}\n")
 
 
 def main():

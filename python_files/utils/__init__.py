@@ -1,6 +1,3 @@
-"""
-Utility modules for training and evaluation.
-"""
 
 from .dataset import ArtDataset, get_dataloaders
 from .metrics import calculate_metrics, plot_confusion_matrix

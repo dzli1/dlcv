@@ -60,7 +60,6 @@ if __name__ == '__main__':
     TUNED_CHECKPOINT = 'best_vgg16_bn_tuned.pth'
     HISTORY_FILE = 'training_history_vgg16.json'
     
-    # --- Phase 1: Base Training ---
     print(f"\nTRAINING {ARCH.upper()}: PHASE 1 - BASE TRAINING")
     
     model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=True)
@@ -71,7 +70,6 @@ if __name__ == '__main__':
     final_model, history_base = train_model(model, dataloaders, criterion, optimizer_base, NUM_EPOCHS_BASE, BASE_CHECKPOINT, image_datasets)
     print(f"Base training complete. Model saved to: {BASE_CHECKPOINT}")
 
-    # --- Phase 2: Fine-Tuning ---
     print(f"\nTRAINING {ARCH.upper()}: PHASE 2 - FINE-TUNING")
     
     final_model = setup_model(NUM_CLASSES, DEVICE, arch=ARCH, freeze_base=False)
@@ -81,7 +79,6 @@ if __name__ == '__main__':
     final_model_tuned, history_fine_tune = train_model(final_model, dataloaders, criterion, optimizer_tune, NUM_EPOCHS_TUNE, TUNED_CHECKPOINT, image_datasets)
     print(f"Fine-tuning complete. Model saved to: {TUNED_CHECKPOINT}")
 
-    # --- Save History ---
     full_history = {
         'base_train_loss': history_base['train_loss'], 'base_val_loss': history_base['val_loss'],
         'base_train_acc': history_base['train_acc'], 'base_val_acc': history_base['val_acc'],

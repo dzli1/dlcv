@@ -38,7 +38,7 @@ def load_model(arch, checkpoint_path, num_classes, device):
     try:
         model = setup_model(num_classes, device, arch=arch, freeze_base=False)
         model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-        print(f"✓ Loaded {arch}")
+        print(f"Loaded {arch}")
         return model
     except Exception as e:
         print(f"Error loading {arch}: {e}")

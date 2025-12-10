@@ -1,6 +1,3 @@
-"""
-Metrics and visualization utilities for model evaluation.
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,17 +7,7 @@ import json
 
 
 def calculate_metrics(y_true, y_pred, class_names=None):
-    """
-    Calculate comprehensive classification metrics.
 
-    Args:
-        y_true: True labels
-        y_pred: Predicted labels
-        class_names: Optional list of class names
-
-    Returns:
-        dict: Dictionary containing various metrics
-    """
     accuracy = accuracy_score(y_true, y_pred)
     f1_macro = f1_score(y_true, y_pred, average='macro', zero_division=0)
     f1_weighted = f1_score(y_true, y_pred, average='weighted', zero_division=0)
@@ -44,17 +31,7 @@ def calculate_metrics(y_true, y_pred, class_names=None):
 
 
 def plot_confusion_matrix(y_true, y_pred, class_names, save_path, title='Confusion Matrix', normalize=True):
-    """
-    Plot and save confusion matrix.
-
-    Args:
-        y_true: True labels
-        y_pred: Predicted labels
-        class_names: List of class names
-        save_path: Path to save the figure
-        title: Title for the plot
-        normalize: Whether to normalize the confusion matrix
-    """
+  
     # Compute confusion matrix
     cm = confusion_matrix(y_true, y_pred)
 
@@ -92,14 +69,7 @@ def plot_confusion_matrix(y_true, y_pred, class_names, save_path, title='Confusi
 
 
 def plot_training_curves(history, save_path, title='Training History'):
-    """
-    Plot training and validation curves.
 
-    Args:
-        history: Dictionary containing training history
-        save_path: Path to save the figure
-        title: Title for the plot
-    """
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
     # Loss curve
@@ -131,13 +101,7 @@ def plot_training_curves(history, save_path, title='Training History'):
 
 
 def save_metrics_json(metrics, save_path):
-    """
-    Save metrics to JSON file.
 
-    Args:
-        metrics: Dictionary of metrics
-        save_path: Path to save JSON file
-    """
     # Convert numpy types to Python types for JSON serialization
     def convert_types(obj):
         if isinstance(obj, np.integer):

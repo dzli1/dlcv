@@ -38,7 +38,7 @@ def test_model(arch, checkpoint_path, num_classes, class_names, test_loader, dev
     
     # Check if checkpoint exists
     if not os.path.exists(checkpoint_path):
-        print(f"❌ Checkpoint not found at {checkpoint_path}")
+        print(f"Checkpoint not found at {checkpoint_path}")
         return None
     
     try:
@@ -46,7 +46,7 @@ def test_model(arch, checkpoint_path, num_classes, class_names, test_loader, dev
         print(f"Loading model: {arch}...")
         model = setup_model(num_classes, device, arch=arch, freeze_base=False)
         model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-        print(f"✓ Model loaded successfully")
+        print(f"Model loaded successfully")
         
         # Evaluate on test set
         print(f"\nEvaluating on test set...")
@@ -75,19 +75,15 @@ def test_model(arch, checkpoint_path, num_classes, class_names, test_loader, dev
         }
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return None
 
 
 def main():
     # Main function to test individual models
     
-    print("\nINDIVIDUAL MODEL TESTING ON TEST SET")
-    print("\nThis script will evaluate ResNet, EfficientNet, and VGG16 on the test set.")
-    print("Make sure the models have finished training.\n")
     
     # Load test data
-    print("Loading test data...")
     dataloaders, image_datasets, num_classes, class_names = get_dataloaders()
     test_loader = dataloaders['test']
     
@@ -134,7 +130,6 @@ def main():
     if results:
         print("\nSUMMARY")
         print(f"\n{'Model':<20s} {'Accuracy':<12s} {'F1 (Macro)':<12s} {'F1 (Weighted)':<15s}")
-        print("-" * 60)
         
         for arch, result in results.items():
             print(f"{result['display_name']:<20s} "
@@ -144,11 +139,11 @@ def main():
         
         # Find best model
         best_model = max(results.items(), key=lambda x: x[1]['accuracy'])
-        print(f"\n✓ BEST MODEL: {best_model[1]['display_name']}")
+        print(f"\nBEST MODEL: {best_model[1]['display_name']}")
         print(f"  Accuracy: {best_model[1]['accuracy']:.4f} ({best_model[1]['accuracy']*100:.2f}%)")
         print(f"  F1 (Macro): {best_model[1]['f1_macro']:.4f}\n")
     else:
-        print("\n❌ No models were successfully tested. Check that checkpoints exist.\n")
+        print("\nNo models were successfully tested. Check that checkpoints exist.\n")
 
 
 if __name__ == '__main__':

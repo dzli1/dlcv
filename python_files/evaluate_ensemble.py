@@ -43,7 +43,7 @@ def load_model(arch, checkpoint_path, num_classes, device):
     try:
         model = setup_model(num_classes, device, arch=arch, freeze_base=False)
         model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-        print(f"✓ Loaded {arch} from {checkpoint_path}")
+        print(f"Loaded {arch} from {checkpoint_path}")
         return model
     except Exception as e:
         print(f"Error loading {arch}: {e}")
@@ -219,7 +219,7 @@ def evaluate_ensemble(models_config, test_loader, num_classes, class_names, devi
     
     # Find best ensemble method
     best_method = max(ensemble_results.items(), key=lambda x: x[1]['accuracy'])
-    print(f"\n✓ Best Ensemble Method: {best_method[0]} (Accuracy: {best_method[1]['accuracy']:.4f})")
+    print(f"\nBest Ensemble Method: {best_method[0]} (Accuracy: {best_method[1]['accuracy']:.4f})")
     
     # Prepare results dictionary
     results = {
@@ -265,13 +265,7 @@ def main():
         }
     ]
     
-    print("\nENSEMBLE MODEL EVALUATION")
-    print("\nThis script will:")
-    print("  1. Load all trained models")
-    print("  2. Evaluate each model individually on test set")
-    print("  3. Combine predictions using multiple ensemble methods")
-    print("  4. Report accuracy and F1 scores for all methods")
-    print("\nMake sure all models have finished training before running this script.\n")
+
     
     # Load data
     print("Loading test data...")
@@ -301,34 +295,10 @@ def main():
     
     results_path = os.path.join(output_dir, 'ensemble_results.json')
     save_metrics_json(results, results_path)
-    print(f"\n✓ Results saved to: {results_path}")
+    print(f"\nResults saved to: {results_path}")
     
-    # Create summary text file
-    summary_path = os.path.join(output_dir, 'ensemble_summary.txt')
-    with open(summary_path, 'w') as f:
-        f.write("ENSEMBLE EVALUATION SUMMARY\n\n")
-        
-        f.write("INDIVIDUAL MODEL RESULTS:\n")
-        f.write("-" * 60 + "\n")
-        for arch, model_results in results['individual_models'].items():
-            f.write(f"{model_results['display_name']:20s}: ")
-            f.write(f"Accuracy={model_results['accuracy']:.4f}, ")
-            f.write(f"F1_Macro={model_results['f1_macro']:.4f}, ")
-            f.write(f"F1_Weighted={model_results['f1_weighted']:.4f}\n")
-        
-        f.write("\nENSEMBLE RESULTS:\n")
-        f.write("-" * 60 + "\n")
-        for method_name, method_results in results['ensemble_methods'].items():
-            f.write(f"{method_name:20s}: ")
-            f.write(f"Accuracy={method_results['accuracy']:.4f}, ")
-            f.write(f"F1_Macro={method_results['f1_macro']:.4f}, ")
-            f.write(f"F1_Weighted={method_results['f1_weighted']:.4f}\n")
-        
-        f.write(f"\nBEST ENSEMBLE METHOD: {results['best_method']}\n")
-        f.write(f"BEST ACCURACY: {results['best_accuracy']:.4f}\n")
     
-    print(f"✓ Summary saved to: {summary_path}")
-    print("\nENSEMBLE EVALUATION COMPLETE!\n")
+
 
 
 if __name__ == '__main__':
